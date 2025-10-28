@@ -41,65 +41,39 @@ export const authAPI = {
   },
 };
 
+
 export const jobAPI = {
-  getAllJobs: async (filters = {}) => {
+  getAllJobs: (filters = {}) => {
     const params = new URLSearchParams();
     if (filters.search) params.append('search', filters.search);
     if (filters.location) params.append('location', filters.location);
     if (filters.category) params.append('category', filters.category);
     if (filters.type) params.append('type', filters.type);
-
-    const response = await api.get(`/jobs?${params.toString()}`);
-    return response;
+    return api.get(`/jobs?${params.toString()}`);
   },
 
-  getJobById: async (id) => {
-    const response = await api.get(`/jobs/${id}`);
-    return response;
-  },
+  getJobById: (id) => api.get(`/jobs/${id}`),
 
-  createJob: async (jobData) => {
-    const response = await api.post('/jobs', jobData);
-    return response;
-  },
+  createJob: (jobData) => api.post('/jobs', jobData),
 
-  updateJob: async (id, jobData) => {
-    const response = await api.put(`/jobs/${id}`, jobData);
-    return response;
-  },
+  updateJob: (id, jobData) => api.put(`/jobs/${id}`, jobData),
 
-  deleteJob: async (id) => {
-    const response = await api.delete(`/jobs/${id}`);
-    return response;
-  },
+  deleteJob: (id) => api.delete(`/jobs/${id}`),
 
-  getRecruiterJobs: async () => {
-    const response = await api.get('/jobs/recruiter/my-jobs');
-    return response;
-  },
+  getRecruiterJobs: () => api.get('/jobs/recruiter/my-jobs'),
 };
 
 export const applicationAPI = {
-  applyForJob: async (jobId, applicationData) => {
-    const response = await api.post('/applications', { jobId, ...applicationData });
-    return response;
-  },
+  applyForJob: (jobId, applicationData) => api.post(`/applications/job/${jobId}`, applicationData),
 
-  getStudentApplications: async () => {
-    const response = await api.get('/applications/student/my-applications');
-    return response;
-  },
+  getStudentApplications: () => api.get('/applications/student/my-applications'),
 
-  getJobApplicants: async (jobId) => {
-    const response = await api.get(`/applications/job/${jobId}`);
-    return response;
-  },
+  getJobApplicants: (jobId) => api.get(`/applications/job/${jobId}/applicants`),
 
-  updateApplicationStatus: async (applicationId, status) => {
-    const response = await api.put(`/applications/${applicationId}/status`, { status });
-    return response;
-  },
+  updateApplicationStatus: (applicationId, status) => 
+    api.put(`/applications/${applicationId}/status`, { status }),
 };
+
 
 export const userAPI = {
   getProfile: async () => {
@@ -107,8 +81,9 @@ export const userAPI = {
     return response;
   },
 
-  updateProfile: async (userData) => {
-    const response = await api.put('/users/profile', userData);
+  // ✅ FIX: remove "/profile" from endpoint
+  updateProfile: async (userId, userData) => {
+    const response = await api.put(`/users/${userId}`, userData);
     return response;
   },
 
@@ -127,6 +102,7 @@ export const userAPI = {
     return response;
   },
 };
+
 
 export const statsAPI = {
   getAdminStats: async () => {

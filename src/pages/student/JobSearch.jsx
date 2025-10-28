@@ -83,23 +83,23 @@ const JobSearch = () => {
     setShowApplyModal(true);
   };
 
-  const submitApplication = async () => {
-    setApplying(true);
-    try {
-      await applicationAPI.applyForJob(selectedJob.id, {
-        studentId: user.id,
-        coverLetter,
-      });
-      setToast({ message: 'Application submitted successfully!', type: 'success' });
-      setShowApplyModal(false);
-      setCoverLetter('');
-    } catch (error) {
-      setToast({ message: 'Failed to submit application', type: 'error' });
-    } finally {
-      setApplying(false);
-    }
-  };
 
+// 2️⃣ Change submitApplication to match backend API
+const submitApplication = async () => {
+  setApplying(true);
+  try {
+    await applicationAPI.applyForJob(selectedJob._id, {
+      coverLetter, // studentId is no longer needed
+    });
+    setToast({ message: 'Application submitted successfully!', type: 'success' });
+    setShowApplyModal(false);
+    setCoverLetter('');
+  } catch (error) {
+    setToast({ message: 'Failed to submit application', type: 'error' });
+  } finally {
+    setApplying(false);
+  }
+};
   if (loading) {
     return <Loader fullScreen />;
   }
@@ -184,11 +184,11 @@ const JobSearch = () => {
             Showing {filteredJobs.length} job{filteredJobs.length !== 1 ? 's' : ''}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredJobs.map((job) => (
-              <JobCard key={job.id} job={job} onApply={handleApply} />
-            ))}
-          </div>
+       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  {filteredJobs.map((job) => (
+    <JobCard key={job._id} job={job} onApply={handleApply} />
+  ))}
+</div>
 
           {filteredJobs.length === 0 && (
             <div className="text-center py-12">

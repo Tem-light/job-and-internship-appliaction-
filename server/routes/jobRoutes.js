@@ -11,14 +11,18 @@ import { protect, authorize } from '../middleware/auth.js';
 
 const router = express.Router();
 
-router.route('/').get(protect, getAllJobs).post(protect, authorize('recruiter'), createJob);
+// ✅ Get all jobs (public or protected depending on your app)
+router.route('/')
+  .get(getAllJobs) // You can add `protect` if jobs list should require login
+  .post(protect, authorize('recruiter'), createJob);
 
-router
-  .route('/:id')
-  .get(protect, getJobById)
+// ⚠️ Important: define this BEFORE the “/:id” route to avoid route conflicts
+router.get('/recruiter/my-jobs', protect, getRecruiterJobs);
+
+// ✅ Job by ID operations
+router.route('/:id')
+  .get(getJobById)
   .put(protect, authorize('recruiter'), updateJob)
   .delete(protect, authorize('recruiter'), deleteJob);
-
-router.get('/recruiter/:recruiterId', protect, getRecruiterJobs);
 
 export default router;

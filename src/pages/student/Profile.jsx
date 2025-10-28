@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { userAPI } from '../../utils/api';
 import Sidebar from '../../components/Sidebar';
 import Toast from '../../components/Toast';
-import { User, Mail, Phone, GraduationCap, Calendar, FileText, Plus, X } from 'lucide-react';
+import { User, Mail, Phone, GraduationCap, Calendar, FileText, Plus, X, Upload } from 'lucide-react';
 
 const Profile = () => {
   const { user, updateUser } = useAuth();
@@ -17,16 +17,40 @@ const Profile = () => {
   });
   const [skills, setSkills] = useState(user.skills || []);
   const [newSkill, setNewSkill] = useState('');
+  const [resume, setResume] = useState(user.resume || null);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
+  const fileInputRef = useRef(null);
 
+  // handle input field changes
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const updatedData = { ...formData, skills, resume };
+      await userAPI.updateProfile(user._id, updatedData);
+      updateUser(updatedData);
+      setToast({ message: 'Profile updated successfully!', type: 'success' });
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      setToast({ message: 'Failed to update profile', type: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // add/remove skill
   const addSkill = () => {
-    if (newSkill.trim() && !skills.includes(newSkill.trim())) {
-      setSkills([...skills, newSkill.trim()]);
+    const trimmedSkill = newSkill.trim();
+    if (trimmedSkill && !skills.includes(trimmedSkill)) {
+      setSkills([...skills, trimmedSkill]);
       setNewSkill('');
     }
   };
@@ -35,17 +59,24 @@ const Profile = () => {
     setSkills(skills.filter((skill) => skill !== skillToRemove));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  // handle resume upload
+  const handleResumeUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
     try {
-      const updatedData = { ...formData, skills };
-      await userAPI.updateProfile(user.id, updatedData);
-      updateUser(updatedData);
-      setToast({ message: 'Profile updated successfully!', type: 'success' });
+      setLoading(true);
+      // Example: upload logic (replace with your API logic)
+      // const uploadedResumeUrl = await userAPI.uploadResume(user._id, file);
+
+      // For demo purposes, just store file name locally
+      const uploadedResumeUrl = file.name;
+
+      setResume(uploadedResumeUrl);
+      setToast({ message: 'Resume uploaded successfully!', type: 'success' });
     } catch (error) {
-      setToast({ message: 'Failed to update profile', type: 'error' });
+      console.error('Resume upload failed:', error);
+      setToast({ message: 'Failed to upload resume', type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -64,95 +95,34 @@ const Profile = () => {
           <div className="bg-white rounded-xl shadow-md p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <User className="w-4 h-4 inline mr-2" />
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <Mail className="w-4 h-4 inline mr-2" />
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <Phone className="w-4 h-4 inline mr-2" />
-                    Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <GraduationCap className="w-4 h-4 inline mr-2" />
-                    University
-                  </label>
-                  <input
-                    type="text"
-                    name="university"
-                    value={formData.university}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <FileText className="w-4 h-4 inline mr-2" />
-                    Degree
-                  </label>
-                  <input
-                    type="text"
-                    name="degree"
-                    value={formData.degree}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <Calendar className="w-4 h-4 inline mr-2" />
-                    Graduation Year
-                  </label>
-                  <input
-                    type="number"
-                    name="graduationYear"
-                    value={formData.graduationYear}
-                    onChange={handleChange}
-                    min="2024"
-                    max="2030"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
+                {[
+                  { label: 'Full Name', name: 'name', type: 'text', icon: <User className="w-4 h-4 inline mr-2" /> },
+                  { label: 'Email Address', name: 'email', type: 'email', icon: <Mail className="w-4 h-4 inline mr-2" /> },
+                  { label: 'Phone Number', name: 'phone', type: 'tel', icon: <Phone className="w-4 h-4 inline mr-2" /> },
+                  { label: 'University', name: 'university', type: 'text', icon: <GraduationCap className="w-4 h-4 inline mr-2" /> },
+                  { label: 'Degree', name: 'degree', type: 'text', icon: <FileText className="w-4 h-4 inline mr-2" /> },
+                  { label: 'Graduation Year', name: 'graduationYear', type: 'number', icon: <Calendar className="w-4 h-4 inline mr-2" />, min: 2024, max: 2035 },
+                ].map(({ label, name, type, icon, min, max }) => (
+                  <div key={name}>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {icon}
+                      {label}
+                    </label>
+                    <input
+                      type={type}
+                      name={name}
+                      value={formData[name]}
+                      onChange={handleChange}
+                      required
+                      min={min}
+                      max={max}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                ))}
               </div>
 
+              {/* Skills Section */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Skills</label>
                 <div className="flex gap-2 mb-3">
@@ -179,11 +149,7 @@ const Profile = () => {
                       className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2"
                     >
                       {skill}
-                      <button
-                        type="button"
-                        onClick={() => removeSkill(skill)}
-                        className="hover:text-blue-900"
-                      >
+                      <button type="button" onClick={() => removeSkill(skill)} className="hover:text-blue-900">
                         <X className="w-4 h-4" />
                       </button>
                     </span>
@@ -191,22 +157,32 @@ const Profile = () => {
                 </div>
               </div>
 
+              {/* Resume Upload Section */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Resume</label>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                   <FileText className="w-12 h-12 text-gray-400 mx-auto mb-3" />
                   <p className="text-gray-600 mb-2">
-                    {user.resume || 'No resume uploaded yet'}
+                    {resume ? `Uploaded: ${resume}` : 'No resume uploaded yet'}
                   </p>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    className="hidden"
+                    onChange={handleResumeUpload}
+                    accept=".pdf,.doc,.docx"
+                  />
                   <button
                     type="button"
-                    className="text-blue-600 font-semibold hover:text-blue-700"
+                    onClick={() => fileInputRef.current.click()}
+                    className="text-blue-600 font-semibold hover:text-blue-700 flex items-center justify-center mx-auto gap-2"
                   >
-                    Upload Resume
+                    <Upload className="w-4 h-4" /> Upload Resume
                   </button>
                 </div>
               </div>
 
+              {/* Buttons */}
               <div className="flex justify-end gap-4 pt-6 border-t">
                 <button
                   type="button"

@@ -9,8 +9,11 @@ import { protect, authorize } from '../middleware/auth.js';
 
 const router = express.Router();
 
+// Student routes
 router.post('/job/:jobId', protect, authorize('student'), applyForJob);
-router.get('/student/:studentId', protect, getStudentApplications);
+router.get('/student/my-applications', protect, authorize('student'), getStudentApplications);
+
+// Recruiter routes
 router.get('/job/:jobId/applicants', protect, authorize('recruiter'), getJobApplicants);
 router.put('/:id/status', protect, authorize('recruiter'), updateApplicationStatus);
 

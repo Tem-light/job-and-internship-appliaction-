@@ -32,7 +32,7 @@ const Users = () => {
   const handleApprove = async (userId) => {
     try {
       await userAPI.approveRecruiter(userId);
-      setUsers(users.map((user) => (user.id === userId ? { ...user, approved: true } : user)));
+      setUsers(users.map((user) => (user._id === userId ? { ...user, approved: true } : user)));
       setToast({ message: 'Recruiter approved successfully', type: 'success' });
       setSelectedUser(null);
     } catch (error) {
@@ -43,7 +43,7 @@ const Users = () => {
   const handleBlock = async (userId) => {
     try {
       await userAPI.blockUser(userId);
-      setUsers(users.map((user) => (user.id === userId ? { ...user, blocked: true } : user)));
+      setUsers(users.map((user) => (user._id === userId ? { ...user, blocked: true } : user)));
       setToast({ message: 'User blocked successfully', type: 'success' });
       setSelectedUser(null);
     } catch (error) {
@@ -123,7 +123,7 @@ const Users = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredUsers.map((user) => (
               <div
-                key={user.id}
+                key={user._id}
                 className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow"
               >
                 <div className="flex justify-between items-start mb-4">
@@ -299,7 +299,7 @@ const Users = () => {
             <div className="flex justify-end gap-4 border-t pt-4">
               {selectedUser.role === 'recruiter' && !selectedUser.approved && (
                 <button
-                  onClick={() => handleApprove(selectedUser.id)}
+                  onClick={() => handleApprove(selectedUser._id)}
                   className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors"
                 >
                   <CheckCircle className="w-5 h-5" />
@@ -307,7 +307,7 @@ const Users = () => {
                 </button>
               )}
               <button
-                onClick={() => handleBlock(selectedUser.id)}
+                onClick={() => handleBlock(selectedUser._id)}
                 className="flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-colors"
               >
                 <XCircle className="w-5 h-5" />

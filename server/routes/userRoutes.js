@@ -5,6 +5,7 @@ import {
   updateRecruiterProfile,
   getAllUsers,
   approveRecruiter,
+  blockUser,
 } from '../controllers/userController.js';
 import { protect, authorize } from '../middleware/auth.js';
 
@@ -15,5 +16,6 @@ router.put('/:userId', protect, updateProfile);
 router.put('/:userId/student-profile', protect, updateStudentProfile);
 router.put('/:userId/recruiter-profile', protect, updateRecruiterProfile);
 router.put('/:recruiterId/approve', protect, authorize('admin'), approveRecruiter);
+router.put('/:userId/block', protect, authorize('admin'), blockUser);
 
 export default router;

@@ -1,3 +1,4 @@
+// Corrected AppliedJobs.jsx
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { applicationAPI } from '../../utils/api';
@@ -17,7 +18,7 @@ const AppliedJobs = () => {
 
   const fetchApplications = async () => {
     try {
-      const data = await applicationAPI.getStudentApplications(user.id);
+      const data = await applicationAPI.getStudentApplications(user._id); // <-- fix here
       setApplications(data);
     } catch (error) {
       console.error('Error fetching applications:', error);
@@ -29,37 +30,19 @@ const AppliedJobs = () => {
   const getStatusConfig = (status) => {
     switch (status) {
       case 'accepted':
-        return {
-          icon: CheckCircle,
-          color: 'text-green-600',
-          bgColor: 'bg-green-100',
-          label: 'Accepted',
-        };
+        return { icon: CheckCircle, color: 'text-green-600', bgColor: 'bg-green-100', label: 'Accepted' };
       case 'rejected':
-        return {
-          icon: XCircle,
-          color: 'text-red-600',
-          bgColor: 'bg-red-100',
-          label: 'Rejected',
-        };
+        return { icon: XCircle, color: 'text-red-600', bgColor: 'bg-red-100', label: 'Rejected' };
       default:
-        return {
-          icon: Clock,
-          color: 'text-yellow-600',
-          bgColor: 'bg-yellow-100',
-          label: 'Pending',
-        };
+        return { icon: Clock, color: 'text-yellow-600', bgColor: 'bg-yellow-100', label: 'Pending' };
     }
   };
 
-  const filteredApplications =
-    filter === 'all'
-      ? applications
-      : applications.filter((app) => app.status === filter);
+  const filteredApplications = filter === 'all'
+    ? applications
+    : applications.filter((app) => app.status === filter);
 
-  if (loading) {
-    return <Loader fullScreen />;
-  }
+  if (loading) return <Loader fullScreen />;
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -73,44 +56,16 @@ const AppliedJobs = () => {
 
           <div className="bg-white rounded-xl shadow-md p-6 mb-8">
             <div className="flex gap-4">
-              <button
-                onClick={() => setFilter('all')}
-                className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
-                  filter === 'all'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
+              <button onClick={() => setFilter('all')} className={`px-6 py-2 rounded-lg font-semibold transition-colors ${filter === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>
                 All ({applications.length})
               </button>
-              <button
-                onClick={() => setFilter('pending')}
-                className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
-                  filter === 'pending'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
+              <button onClick={() => setFilter('pending')} className={`px-6 py-2 rounded-lg font-semibold transition-colors ${filter === 'pending' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>
                 Pending ({applications.filter((app) => app.status === 'pending').length})
               </button>
-              <button
-                onClick={() => setFilter('accepted')}
-                className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
-                  filter === 'accepted'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
+              <button onClick={() => setFilter('accepted')} className={`px-6 py-2 rounded-lg font-semibold transition-colors ${filter === 'accepted' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>
                 Accepted ({applications.filter((app) => app.status === 'accepted').length})
               </button>
-              <button
-                onClick={() => setFilter('rejected')}
-                className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
-                  filter === 'rejected'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
+              <button onClick={() => setFilter('rejected')} className={`px-6 py-2 rounded-lg font-semibold transition-colors ${filter === 'rejected' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>
                 Rejected ({applications.filter((app) => app.status === 'rejected').length})
               </button>
             </div>
@@ -121,9 +76,7 @@ const AppliedJobs = () => {
               <Briefcase className="w-16 h-16 text-gray-400 mx-auto mb-4" />
               <h3 className="text-xl font-bold text-gray-800 mb-2">No applications found</h3>
               <p className="text-gray-600">
-                {filter === 'all'
-                  ? "You haven't applied to any jobs yet"
-                  : `No ${filter} applications`}
+                {filter === 'all' ? "You haven't applied to any jobs yet" : `No ${filter} applications`}
               </p>
             </div>
           ) : (
@@ -133,18 +86,11 @@ const AppliedJobs = () => {
                 const StatusIcon = statusConfig.icon;
 
                 return (
-                  <div
-                    key={application.id}
-                    className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow"
-                  >
+                  <div key={application._id} className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow">
                     <div className="flex justify-between items-start mb-4">
                       <div>
-                        <h3 className="text-xl font-bold text-gray-800 mb-2">
-                          {application.job.title}
-                        </h3>
-                        <p className="text-blue-600 font-semibold mb-2">
-                          {application.job.company}
-                        </p>
+                        <h3 className="text-xl font-bold text-gray-800 mb-2">{application.job.title}</h3>
+                        <p className="text-blue-600 font-semibold mb-2">{application.job.company}</p>
                         <div className="flex items-center gap-4 text-sm text-gray-600">
                           <span className="flex items-center gap-1">
                             <Briefcase className="w-4 h-4" />
@@ -152,17 +98,13 @@ const AppliedJobs = () => {
                           </span>
                           <span className="flex items-center gap-1">
                             <Calendar className="w-4 h-4" />
-                            Applied on {application.appliedDate}
+                            Applied on {new Date(application.createdAt).toLocaleDateString()}
                           </span>
                         </div>
                       </div>
-                      <div
-                        className={`flex items-center gap-2 px-4 py-2 rounded-lg ${statusConfig.bgColor}`}
-                      >
+                      <div className={`flex items-center gap-2 px-4 py-2 rounded-lg ${statusConfig.bgColor}`}>
                         <StatusIcon className={`w-5 h-5 ${statusConfig.color}`} />
-                        <span className={`font-semibold ${statusConfig.color}`}>
-                          {statusConfig.label}
-                        </span>
+                        <span className={`font-semibold ${statusConfig.color}`}>{statusConfig.label}</span>
                       </div>
                     </div>
 

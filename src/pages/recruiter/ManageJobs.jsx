@@ -119,7 +119,7 @@ const ManageJobs = () => {
 
                   <div className="flex gap-3">
                     <Link
-                      to={`/recruiter/applicants/${job.id}`}
+                      to={`/recruiter/applicants/${job._id}`}
                       className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
                     >
                       <Users className="w-4 h-4" />

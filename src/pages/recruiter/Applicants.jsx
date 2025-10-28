@@ -8,7 +8,7 @@ import Modal from '../../components/Modal';
 import { User, Mail, GraduationCap, FileText, CheckCircle, XCircle } from 'lucide-react';
 
 const Applicants = () => {
-  const { jobId } = useParams();
+  const { jobId } = useParams(); // ✅ Extract jobId from the URL
   const [job, setJob] = useState(null);
   const [applicants, setApplicants] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,15 +16,23 @@ const Applicants = () => {
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
-    fetchData();
+    if (jobId && jobId !== 'undefined') {
+      fetchData();
+    } else {
+      setLoading(false);
+      setToast({ message: 'Invalid Job ID', type: 'error' });
+    }
   }, [jobId]);
 
   const fetchData = async () => {
     try {
+      setLoading(true);
       const [jobData, applicantsData] = await Promise.all([
         jobAPI.getJobById(jobId),
-        applicationAPI.getJobApplicants(parseInt(jobId)),
+        applicationAPI.getJobApplicants(jobId),
       ]);
+
+      // ✅ Axios interceptor already returns response.data
       setJob(jobData);
       setApplicants(applicantsData);
     } catch (error) {
@@ -38,8 +46,10 @@ const Applicants = () => {
   const handleUpdateStatus = async (applicationId, status) => {
     try {
       await applicationAPI.updateApplicationStatus(applicationId, status);
-      setApplicants(
-        applicants.map((app) => (app.id === applicationId ? { ...app, status } : app))
+      setApplicants((prev) =>
+        prev.map((app) =>
+          app._id === applicationId ? { ...app, status } : app
+        )
       );
       setToast({
         message: `Application ${status === 'accepted' ? 'accepted' : 'rejected'}`,
@@ -47,13 +57,12 @@ const Applicants = () => {
       });
       setSelectedApplicant(null);
     } catch (error) {
+      console.error('Error updating application status:', error);
       setToast({ message: 'Failed to update status', type: 'error' });
     }
   };
 
-  if (loading) {
-    return <Loader fullScreen />;
-  }
+  if (loading) return <Loader fullScreen />;
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -63,44 +72,52 @@ const Applicants = () => {
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-800 mb-2">Applicants</h1>
             <p className="text-gray-600">
-              {job?.title} - {applicants.length} application
+              {job?.title || 'Job'} - {applicants.length} application
               {applicants.length !== 1 ? 's' : ''}
             </p>
           </div>
 
-          <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Job Details</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <div>
-                <span className="text-gray-600">Location:</span>{' '}
-                <span className="font-semibold text-gray-800">{job?.location}</span>
-              </div>
-              <div>
-                <span className="text-gray-600">Type:</span>{' '}
-                <span className="font-semibold text-gray-800">{job?.type}</span>
-              </div>
-              <div>
-                <span className="text-gray-600">Salary:</span>{' '}
-                <span className="font-semibold text-gray-800">{job?.salary}</span>
-              </div>
-              <div>
-                <span className="text-gray-600">Posted:</span>{' '}
-                <span className="font-semibold text-gray-800">{job?.postedDate}</span>
+          {job && (
+            <div className="bg-white rounded-xl shadow-md p-6 mb-8">
+              <h2 className="text-xl font-bold text-gray-800 mb-4">Job Details</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="text-gray-600">Location:</span>{' '}
+                  <span className="font-semibold text-gray-800">{job.location}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">Type:</span>{' '}
+                  <span className="font-semibold text-gray-800">{job.type}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">Salary:</span>{' '}
+                  <span className="font-semibold text-gray-800">
+                    {job.salaryMin} - {job.salaryMax}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-gray-600">Posted:</span>{' '}
+                  <span className="font-semibold text-gray-800">
+                    {new Date(job.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {applicants.length === 0 ? (
             <div className="bg-white rounded-xl shadow-md p-12 text-center">
               <User className="w-16 h-16 text-gray-400 mx-auto mb-4" />
               <h3 className="text-xl font-bold text-gray-800 mb-2">No applicants yet</h3>
-              <p className="text-gray-600">Applications will appear here once students apply</p>
+              <p className="text-gray-600">
+                Applications will appear here once students apply.
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {applicants.map((application) => (
                 <div
-                  key={application.id}
+                  key={application._id}
                   className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow"
                 >
                   <div className="flex justify-between items-start mb-4">
@@ -139,21 +156,8 @@ const Applicants = () => {
                     </div>
                     <div className="flex items-center gap-2 text-gray-600">
                       <FileText className="w-4 h-4" />
-                      Applied on {application.appliedDate}
-                    </div>
-                  </div>
-
-                  <div className="mb-4">
-                    <p className="text-sm font-medium text-gray-700 mb-1">Skills:</p>
-                    <div className="flex flex-wrap gap-1">
-                      {application.student.skills?.map((skill, index) => (
-                        <span
-                          key={index}
-                          className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs"
-                        >
-                          {skill}
-                        </span>
-                      ))}
+                      Applied on{' '}
+                      {new Date(application.createdAt).toLocaleDateString()}
                     </div>
                   </div>
 
@@ -170,6 +174,7 @@ const Applicants = () => {
         </div>
       </div>
 
+      {/* Modal for applicant details */}
       <Modal
         isOpen={!!selectedApplicant}
         onClose={() => setSelectedApplicant(null)}
@@ -247,14 +252,18 @@ const Applicants = () => {
             {selectedApplicant.status === 'pending' && (
               <div className="flex justify-end gap-4 border-t pt-4">
                 <button
-                  onClick={() => handleUpdateStatus(selectedApplicant.id, 'rejected')}
+                  onClick={() =>
+                    handleUpdateStatus(selectedApplicant._id, 'rejected')
+                  }
                   className="flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-colors"
                 >
                   <XCircle className="w-5 h-5" />
                   Reject
                 </button>
                 <button
-                  onClick={() => handleUpdateStatus(selectedApplicant.id, 'accepted')}
+                  onClick={() =>
+                    handleUpdateStatus(selectedApplicant._id, 'accepted')
+                  }
                   className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors"
                 >
                   <CheckCircle className="w-5 h-5" />
