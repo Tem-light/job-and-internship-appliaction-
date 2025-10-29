@@ -10,7 +10,7 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token'); // must exist
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -64,7 +64,8 @@ export const jobAPI = {
 };
 
 export const applicationAPI = {
-  applyForJob: (jobId, applicationData) => api.post(`/applications/job/${jobId}`, applicationData),
+applyForJob: (jobId, applicationData) =>
+  api.post(`/applications/job/${jobId}`, applicationData),
 
   getStudentApplications: () => api.get('/applications/student/my-applications'),
 
@@ -73,7 +74,6 @@ export const applicationAPI = {
   updateApplicationStatus: (applicationId, status) => 
     api.put(`/applications/${applicationId}/status`, { status }),
 };
-
 
 export const userAPI = {
   getProfile: async () => {

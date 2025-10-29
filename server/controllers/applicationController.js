@@ -4,6 +4,7 @@ import Job from '../models/Job.js';
 import StudentProfile from '../models/StudentProfile.js';
 
 export const applyForJob = async (req, res) => {
+ 
   try {
     const { coverLetter, resumeUrl } = req.body;
 
@@ -31,9 +32,10 @@ export const applyForJob = async (req, res) => {
   } catch (error) {
     console.error('Error in applyForJob:', error);
     res.status(500).json({ message: error.message });
-  }
-};
+  } console.log("Incoming jobId:", req.params.jobId);
+console.log("Authenticated user:", req.user?._id);
 
+};
 export const getStudentApplications = async (req, res) => {
   try {
     const studentId = req.user._id;
@@ -53,21 +55,24 @@ export const getStudentApplications = async (req, res) => {
     res.json(formattedApplications);
   } catch (error) {
     console.error('Error in getStudentApplications:', error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 };
 
 export const getJobApplicants = async (req, res) => {
-  try {
-    const { jobId } = req.params;
+  const { jobId } = req.params;
 
+  try {
+    // Validate job ID
     if (!mongoose.Types.ObjectId.isValid(jobId)) {
       return res.status(400).json({ message: 'Invalid job ID' });
     }
 
+    // Check if job exists
     const job = await Job.findById(jobId);
     if (!job) return res.status(404).json({ message: 'Job not found' });
 
+    // Check if the user is authorized to view applicants
     if (job.recruiter.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: 'Not authorized to view applicants' });
     }
@@ -93,18 +98,19 @@ export const getJobApplicants = async (req, res) => {
     res.json(applicationsWithProfiles);
   } catch (error) {
     console.error('Error in getJobApplicants:', error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 };
 
 export const updateApplicationStatus = async (req, res) => {
-  try {
-    const { status } = req.body;
+  const { status } = req.body;
 
+  try {
     const application = await Application.findById(req.params.id).populate('job');
 
     if (!application) return res.status(404).json({ message: 'Application not found' });
 
+    // Check if the user is authorized to update this application
     if (application.job.recruiter.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: 'Not authorized to update this application' });
     }
@@ -118,6 +124,6 @@ export const updateApplicationStatus = async (req, res) => {
     });
   } catch (error) {
     console.error('Error in updateApplicationStatus:', error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 };

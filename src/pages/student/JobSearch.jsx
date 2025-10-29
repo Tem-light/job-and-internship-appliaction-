@@ -86,20 +86,30 @@ const JobSearch = () => {
 
 // 2️⃣ Change submitApplication to match backend API
 const submitApplication = async () => {
+  if (!selectedJob || !selectedJob._id) {
+    setToast({ message: 'Job ID is missing. Please try again.', type: 'error' });
+    return;
+  }
+
   setApplying(true);
   try {
-    await applicationAPI.applyForJob(selectedJob._id, {
-      coverLetter, // studentId is no longer needed
-    });
+    await applicationAPI.applyForJob(selectedJob._id, { coverLetter });
+ 
+
     setToast({ message: 'Application submitted successfully!', type: 'success' });
     setShowApplyModal(false);
     setCoverLetter('');
   } catch (error) {
-    setToast({ message: 'Failed to submit application', type: 'error' });
+    console.error('Application submission error:', error);
+    setToast({
+      message: error.message || 'Failed to submit application',
+      type: 'error',
+    });
   } finally {
     setApplying(false);
   }
 };
+
   if (loading) {
     return <Loader fullScreen />;
   }

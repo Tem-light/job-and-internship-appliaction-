@@ -13,8 +13,23 @@ const ManageJobs = () => {
   const { user } = useAuth();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Delete modal state
   const [deleteModal, setDeleteModal] = useState(null);
   const [deleting, setDeleting] = useState(false);
+
+  // Edit modal state
+  const [editModal, setEditModal] = useState(null);
+  const [updating, setUpdating] = useState(false);
+  const [editForm, setEditForm] = useState({
+    title: '',
+    company: '',
+    location: '',
+    type: '',
+    salary: '',
+    description: '',
+  });
+
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
@@ -33,6 +48,7 @@ const ManageJobs = () => {
     }
   };
 
+  // Delete Job
   const handleDelete = async () => {
     setDeleting(true);
     try {
@@ -46,6 +62,39 @@ const ManageJobs = () => {
       setDeleting(false);
     }
   };
+
+  // Open Edit Modal
+  const handleEdit = (job) => {
+  setEditForm({
+    title: job.title,
+    company: job.company,
+    location: job.location,
+    type: job.type,
+    salary: job.salary,
+    description: job.description,
+  });
+  setEditModal(job); // keep the job object with _id
+};
+
+  // Handle Edit Form Change
+  const handleEditChange = (e) => {
+    setEditForm({ ...editForm, [e.target.name]: e.target.value });
+  };
+
+  // Submit Job Update
+ const handleUpdate = async () => {
+  setUpdating(true);
+  try {
+    const updatedJob = await jobAPI.updateJob(editModal._id, editForm);
+    setJobs(jobs.map((job) => (job._id === editModal._id ? updatedJob : job)));
+    setToast({ message: 'Job updated successfully', type: 'success' });
+    setEditModal(null);
+  } catch (error) {
+    setToast({ message: 'Failed to update job', type: 'error' });
+  } finally {
+    setUpdating(false);
+  }
+};
 
   if (loading) {
     return <Loader fullScreen />;
@@ -125,7 +174,10 @@ const ManageJobs = () => {
                       <Users className="w-4 h-4" />
                       View Applicants
                     </Link>
-                    <button className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-200 transition-colors">
+                    <button
+                      onClick={() => handleEdit(job)}
+                      className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
+                    >
                       <Edit className="w-4 h-4" />
                       Edit
                     </button>
@@ -144,6 +196,7 @@ const ManageJobs = () => {
         </div>
       </div>
 
+      {/* Delete Modal */}
       <Modal
         isOpen={!!deleteModal}
         onClose={() => setDeleteModal(null)}
@@ -170,6 +223,60 @@ const ManageJobs = () => {
               {deleting ? 'Deleting...' : 'Delete'}
             </button>
           </div>
+        </div>
+      </Modal>
+
+      {/* Edit Modal */}
+      <Modal
+        isOpen={!!editModal}
+        onClose={() => setEditModal(null)}
+        title="Edit Job"
+        size="lg"
+      >
+        <div className="space-y-4">
+          {editModal && (
+            <>
+              {['title', 'company', 'location', 'type', 'salary', 'description'].map((field) => (
+                <div key={field}>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {field.charAt(0).toUpperCase() + field.slice(1)}
+                  </label>
+                  {field === 'description' ? (
+                    <textarea
+                      name={field}
+                      value={editForm[field]}
+                      onChange={handleEditChange}
+                      rows="4"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  ) : (
+                    <input
+                      type="text"
+                      name={field}
+                      value={editForm[field]}
+                      onChange={handleEditChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  )}
+                </div>
+              ))}
+              <div className="flex justify-end gap-4">
+                <button
+                  onClick={() => setEditModal(null)}
+                  className="px-6 py-3 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleUpdate}
+                  disabled={updating}
+                  className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:bg-blue-400"
+                >
+                  {updating ? 'Updating...' : 'Update Job'}
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </Modal>
 
