@@ -9,13 +9,20 @@ const api = axios.create({
   },
 });
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token'); // must exist
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+
+// Add this to your existing api.js or where your API instance is created
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-  return config;
-});
+);
 
 api.interceptors.response.use(
   (response) => response.data,
@@ -62,19 +69,19 @@ export const jobAPI = {
 
   getRecruiterJobs: () => api.get('/jobs/recruiter/my-jobs'),
 };
-
 export const applicationAPI = {
-applyForJob: (jobId, applicationData) =>
-  api.post(`/applications/job/${jobId}`, applicationData),
+  applyForJob: (jobId, applicationData) =>
+    api.post(`/applications/job/${jobId}`, applicationData),
 
-  getStudentApplications: () => api.get('/applications/student/my-applications'),
+  getStudentApplications: () => 
+    api.get('/applications/student/my-applications'),
 
-  getJobApplicants: (jobId) => api.get(`/applications/job/${jobId}/applicants`),
+  getJobApplicants: (jobId) => 
+    api.get(`/applications/job/${jobId}/applicants`),
 
-  updateApplicationStatus: (applicationId, status) => 
+  updateApplicationStatus: (applicationId, status) =>
     api.put(`/applications/${applicationId}/status`, { status }),
 };
-
 export const userAPI = {
   getProfile: async () => {
     const response = await api.get('/users/profile');
@@ -119,6 +126,13 @@ export const statsAPI = {
     const response = await api.get('/stats/student');
     return response;
   },
+};
+
+export const notificationAPI = {
+  list: () => api.get('/notifications'),
+  unreadCount: () => api.get('/notifications/unread-count'),
+  markRead: (id) => api.put(`/notifications/${id}/read`),
+  markAllRead: () => api.put('/notifications/mark-all-read'),
 };
 
 export default api;

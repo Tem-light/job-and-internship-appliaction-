@@ -2,10 +2,10 @@ import { MapPin, Briefcase, DollarSign, Calendar, Users } from 'lucide-react';
 
 const JobCard = ({ job, onApply, showApplicants = false }) => {
   return (
-    <div className="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow p-6 border border-gray-100">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-shadow p-6 border border-gray-100 dark:border-gray-700">
       <div className="flex justify-between items-start mb-4">
         <div>
-          <h3 className="text-xl font-bold text-gray-800 mb-2">{job.title}</h3>
+          <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">{job.title}</h3>
           <p className="text-blue-600 font-semibold">{job.company}</p>
         </div>
         <span
@@ -19,22 +19,22 @@ const JobCard = ({ job, onApply, showApplicants = false }) => {
         </span>
       </div>
 
-      <p className="text-gray-600 mb-4 line-clamp-2">{job.description}</p>
+      <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">{job.description}</p>
 
       <div className="space-y-2 mb-4">
-        <div className="flex items-center gap-2 text-gray-600">
+        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
           <MapPin className="w-4 h-4" />
           <span className="text-sm">{job.location}</span>
         </div>
-        <div className="flex items-center gap-2 text-gray-600">
+        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
           <Briefcase className="w-4 h-4" />
           <span className="text-sm">{job.category}</span>
         </div>
-        <div className="flex items-center gap-2 text-gray-600">
+        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
           <DollarSign className="w-4 h-4" />
           <span className="text-sm">{job.salary}</span>
         </div>
-        <div className="flex items-center gap-2 text-gray-600">
+        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
           <Calendar className="w-4 h-4" />
           <span className="text-sm">Posted on {job.postedDate}</span>
         </div>
@@ -50,13 +50,13 @@ const JobCard = ({ job, onApply, showApplicants = false }) => {
         {job.requirements.slice(0, 3).map((req, index) => (
           <span
             key={index}
-            className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium"
+            className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-100 rounded-full text-xs font-medium"
           >
             {req}
           </span>
         ))}
         {job.requirements.length > 3 && (
-          <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium">
+          <span className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-100 rounded-full text-xs font-medium">
             +{job.requirements.length - 3} more
           </span>
         )}

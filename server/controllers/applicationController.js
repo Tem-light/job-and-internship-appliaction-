@@ -2,39 +2,74 @@ import mongoose from 'mongoose';
 import Application from '../models/Application.js';
 import Job from '../models/Job.js';
 import StudentProfile from '../models/StudentProfile.js';
+import Notification from '../models/Notification.js';
 
 export const applyForJob = async (req, res) => {
- 
+  const { coverLetter, resumeUrl } = req.body;
+  const jobId = req.params.jobId; // Ensure this gets the correct job ID
+
   try {
-    const { coverLetter, resumeUrl } = req.body;
-
-    const existingApplication = await Application.findOne({
-      job: req.params.jobId,
-      student: req.user._id,
-    });
-
-    if (existingApplication) {
-      return res.status(400).json({ message: 'You have already applied to this job' });
+    // Check for user
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: 'Unauthorized: user not found' });
     }
 
+    // Validate job ID
+    if (!mongoose.Types.ObjectId.isValid(jobId)) {
+      return res.status(400).json({ message: 'Invalid job ID' });
+    }
+
+    // Check if job exists
+    const job = await Job.findById(jobId);
+    if (!job) {
+      return res.status(404).json({ message: 'Job not found' });
+    }
+
+    // Check for duplicate application
+    const existingApp = await Application.findOne({
+      job: jobId,
+      student: req.user._id,
+    });
+    
+    if (existingApp) {
+      return res.status(400).json({ message: 'You have already applied for this job' });
+    }
+
+    // Create application
     const application = await Application.create({
-      job: req.params.jobId,
+      job: jobId,
       student: req.user._id,
       coverLetter: coverLetter || '',
       resumeUrl: resumeUrl || '',
       status: 'pending',
-      appliedDate: new Date().toISOString(),
+      appliedDate: new Date(),
     });
 
-    await Job.findByIdAndUpdate(req.params.jobId, { $inc: { applicantsCount: 1 } });
+    // Create notifications
+    try {
+      // Notify recruiter
+      await Notification.create({
+        user: job.recruiter,
+        type: 'application_created',
+        message: `New application for ${job.title} from ${req.user.name}`,
+        data: { jobId: job._id, applicationId: application._id, studentId: req.user._id },
+      });
+      // Notify student (confirmation)
+      await Notification.create({
+        user: req.user._id,
+        type: 'application_submitted',
+        message: `You applied to ${job.title} at ${job.company}`,
+        data: { jobId: job._id, applicationId: application._id },
+      });
+    } catch (e) {
+      console.warn('Failed to create notifications:', e.message);
+    }
 
     res.status(201).json({ ...application.toObject(), id: application._id });
   } catch (error) {
-    console.error('Error in applyForJob:', error);
-    res.status(500).json({ message: error.message });
-  } console.log("Incoming jobId:", req.params.jobId);
-console.log("Authenticated user:", req.user?._id);
-
+    console.error('Error in applyForJob:', error.message);
+    res.status(500).json({ message: 'Internal Server Error', error: error.message });
+  }
 };
 export const getStudentApplications = async (req, res) => {
   try {
@@ -78,19 +113,19 @@ export const getJobApplicants = async (req, res) => {
     }
 
     const applications = await Application.find({ job: jobId })
-      .populate('student', 'name email degree university graduationYear skills')
+      .populate('student', 'name email')
       .sort({ createdAt: -1 });
 
     const applicationsWithProfiles = await Promise.all(
       applications.map(async (app) => {
-        const studentProfile = await StudentProfile.findOne({ user: app.student._id });
+        const userId = app.student?._id;
+        const studentProfile = userId ? await StudentProfile.findOne({ user: userId }) : null;
         return {
           ...app.toObject(),
           id: app._id, // For frontend consistency
-          student: {
-            ...app.student.toObject(),
-            ...(studentProfile ? studentProfile.toObject() : {}),
-          },
+          student: app.student
+            ? { ...app.student.toObject(), ...(studentProfile ? studentProfile.toObject() : {}) }
+            : null,
         };
       })
     );
@@ -117,6 +152,18 @@ export const updateApplicationStatus = async (req, res) => {
 
     application.status = status;
     await application.save();
+
+    // Notify student about status change
+    try {
+      await Notification.create({
+        user: application.student,
+        type: 'application_status',
+        message: `Your application for ${application.job.title} was ${status}`,
+        data: { jobId: application.job._id, applicationId: application._id, status },
+      });
+    } catch (e) {
+      console.warn('Failed to create status notification:', e.message);
+    }
 
     res.json({
       ...application.toObject(),

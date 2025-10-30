@@ -65,16 +65,16 @@ const ManageJobs = () => {
 
   // Open Edit Modal
   const handleEdit = (job) => {
-  setEditForm({
-    title: job.title,
-    company: job.company,
-    location: job.location,
-    type: job.type,
-    salary: job.salary,
-    description: job.description,
-  });
-  setEditModal(job); // keep the job object with _id
-};
+    setEditForm({
+      title: job.title,
+      company: job.company,
+      location: job.location,
+      type: job.type,
+      salary: job.salary,
+      description: job.description,
+    });
+    setEditModal(job); // keep the job object with _id
+  };
 
   // Handle Edit Form Change
   const handleEditChange = (e) => {
@@ -82,33 +82,33 @@ const ManageJobs = () => {
   };
 
   // Submit Job Update
- const handleUpdate = async () => {
-  setUpdating(true);
-  try {
-    const updatedJob = await jobAPI.updateJob(editModal._id, editForm);
-    setJobs(jobs.map((job) => (job._id === editModal._id ? updatedJob : job)));
-    setToast({ message: 'Job updated successfully', type: 'success' });
-    setEditModal(null);
-  } catch (error) {
-    setToast({ message: 'Failed to update job', type: 'error' });
-  } finally {
-    setUpdating(false);
-  }
-};
+  const handleUpdate = async () => {
+    setUpdating(true);
+    try {
+      const updatedJob = await jobAPI.updateJob(editModal._id, editForm);
+      setJobs(jobs.map((job) => (job._id === editModal._id ? updatedJob : job)));
+      setToast({ message: 'Job updated successfully', type: 'success' });
+      setEditModal(null);
+    } catch (error) {
+      setToast({ message: 'Failed to update job', type: 'error' });
+    } finally {
+      setUpdating(false);
+    }
+  };
 
   if (loading) {
     return <Loader fullScreen />;
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar />
       <div className="flex-1 p-8">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8 flex justify-between items-center">
             <div>
-              <h1 className="text-3xl font-bold text-gray-800 mb-2">Manage Jobs</h1>
-              <p className="text-gray-600">View and manage all your job postings</p>
+              <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">Manage Jobs</h1>
+              <p className="text-gray-600 dark:text-gray-300">View and manage all your job postings</p>
             </div>
             <Link
               to="/recruiter/post-job"
@@ -119,9 +119,9 @@ const ManageJobs = () => {
           </div>
 
           {jobs.length === 0 ? (
-            <div className="bg-white rounded-xl shadow-md p-12 text-center">
-              <h3 className="text-xl font-bold text-gray-800 mb-2">No jobs posted yet</h3>
-              <p className="text-gray-600 mb-6">Start by posting your first job opening</p>
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-12 text-center">
+              <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">No jobs posted yet</h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-6">Start by posting your first job opening</p>
               <Link
                 to="/recruiter/post-job"
                 className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
@@ -134,13 +134,13 @@ const ManageJobs = () => {
               {jobs.map((job) => (
                 <div
                   key={job.id}
-                  className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow"
+                  className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow"
                 >
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <h3 className="text-xl font-bold text-gray-800 mb-2">{job.title}</h3>
+                      <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">{job.title}</h3>
                       <p className="text-blue-600 font-semibold mb-2">{job.company}</p>
-                      <div className="flex items-center gap-4 text-sm text-gray-600">
+                      <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
                         <span>{job.location}</span>
                         <span>•</span>
                         <span>{job.type}</span>
@@ -159,12 +159,7 @@ const ManageJobs = () => {
                     </span>
                   </div>
 
-                  <p className="text-gray-600 mb-4">{job.description}</p>
-
-                  <div className="flex items-center gap-2 mb-4 text-gray-600">
-                    <Users className="w-4 h-4" />
-                    <span className="text-sm font-medium">{job.applicants} applicants</span>
-                  </div>
+                  <p className="text-gray-600 dark:text-gray-400 mb-4">{job.description}</p>
 
                   <div className="flex gap-3">
                     <Link
@@ -176,7 +171,7 @@ const ManageJobs = () => {
                     </Link>
                     <button
                       onClick={() => handleEdit(job)}
-                      className="flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
+                      className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
                     >
                       <Edit className="w-4 h-4" />
                       Edit
@@ -204,14 +199,14 @@ const ManageJobs = () => {
         size="sm"
       >
         <div className="space-y-6">
-          <p className="text-gray-700">
+          <p className="text-gray-700 dark:text-gray-300">
             Are you sure you want to delete the job posting for{' '}
             <span className="font-bold">{deleteModal?.title}</span>? This action cannot be undone.
           </p>
           <div className="flex justify-end gap-4">
             <button
               onClick={() => setDeleteModal(null)}
-              className="px-6 py-3 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+              className="px-6 py-3 border border-gray-300 rounded-lg font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 transition-colors"
             >
               Cancel
             </button>
@@ -238,7 +233,7 @@ const ManageJobs = () => {
             <>
               {['title', 'company', 'location', 'type', 'salary', 'description'].map((field) => (
                 <div key={field}>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {field.charAt(0).toUpperCase() + field.slice(1)}
                   </label>
                   {field === 'description' ? (
@@ -247,7 +242,7 @@ const ManageJobs = () => {
                       value={editForm[field]}
                       onChange={handleEditChange}
                       rows="4"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
                     />
                   ) : (
                     <input
@@ -255,7 +250,7 @@ const ManageJobs = () => {
                       name={field}
                       value={editForm[field]}
                       onChange={handleEditChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
                     />
                   )}
                 </div>
@@ -263,7 +258,7 @@ const ManageJobs = () => {
               <div className="flex justify-end gap-4">
                 <button
                   onClick={() => setEditModal(null)}
-                  className="px-6 py-3 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="px-6 py-3 border border-gray-300 rounded-lg font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 transition-colors"
                 >
                   Cancel
                 </button>

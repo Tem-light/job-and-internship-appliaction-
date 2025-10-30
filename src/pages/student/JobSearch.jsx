@@ -83,48 +83,63 @@ const JobSearch = () => {
     setShowApplyModal(true);
   };
 
+  const submitApplication = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setToast({ 
+        message: 'Please log in to apply for jobs', 
+        type: 'error' 
+      });
+      return;
+    }
 
-// 2️⃣ Change submitApplication to match backend API
-const submitApplication = async () => {
-  if (!selectedJob || !selectedJob._id) {
-    setToast({ message: 'Job ID is missing. Please try again.', type: 'error' });
-    return;
-  }
-
-  setApplying(true);
-  try {
-    await applicationAPI.applyForJob(selectedJob._id, { coverLetter });
- 
-
-    setToast({ message: 'Application submitted successfully!', type: 'success' });
-    setShowApplyModal(false);
-    setCoverLetter('');
-  } catch (error) {
-    console.error('Application submission error:', error);
-    setToast({
-      message: error.message || 'Failed to submit application',
-      type: 'error',
-    });
-  } finally {
-    setApplying(false);
-  }
-};
+    setApplying(true);
+    try {
+      const applicationData = {
+        coverLetter,
+      };
+      
+      await applicationAPI.applyForJob(selectedJob._id, applicationData);
+      setToast({ 
+        message: 'Application submitted successfully!', 
+        type: 'success' 
+      });
+      setShowApplyModal(false);
+      setCoverLetter('');
+    } catch (error) {
+      console.error('Application submission error:', error);
+      if (error.response?.status === 401) {
+        setToast({ 
+          message: 'Session expired. Please log in again.', 
+          type: 'error' 
+        });
+        localStorage.removeItem('token');
+      } else {
+        setToast({ 
+          message: 'Failed to submit application', 
+          type: 'error' 
+        });
+      }
+    } finally {
+      setApplying(false);
+    }
+  };
 
   if (loading) {
     return <Loader fullScreen />;
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar />
       <div className="flex-1 p-8">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">Find Your Dream Job</h1>
-            <p className="text-gray-600">Browse through {jobs.length} available opportunities</p>
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">Find Your Dream Job</h1>
+            <p className="text-gray-600 dark:text-gray-300">Browse through {jobs.length} available opportunities</p>
           </div>
 
-          <div className="bg-white rounded-xl shadow-md p-6 mb-8">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-8 border border-gray-200 dark:border-gray-700">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="md:col-span-2">
                 <div className="relative">
@@ -135,7 +150,7 @@ const submitApplication = async () => {
                     value={filters.search}
                     onChange={handleFilterChange}
                     placeholder="Search by job title or company"
-                    className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
                   />
                 </div>
               </div>
@@ -149,7 +164,7 @@ const submitApplication = async () => {
                     value={filters.location}
                     onChange={handleFilterChange}
                     placeholder="Location"
-                    className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
                   />
                 </div>
               </div>
@@ -161,7 +176,7 @@ const submitApplication = async () => {
                     name="type"
                     value={filters.type}
                     onChange={handleFilterChange}
-                    className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
+                    className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
                   >
                     <option value="">All Types</option>
                     <option value="Internship">Internship</option>
@@ -177,7 +192,7 @@ const submitApplication = async () => {
                     name="category"
                     value={filters.category}
                     onChange={handleFilterChange}
-                    className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
+                    className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
                   >
                     <option value="">All Categories</option>
                     <option value="Software Development">Software Development</option>
@@ -190,19 +205,19 @@ const submitApplication = async () => {
             </div>
           </div>
 
-          <div className="mb-4 text-gray-600">
+          <div className="mb-4 text-gray-600 dark:text-gray-300">
             Showing {filteredJobs.length} job{filteredJobs.length !== 1 ? 's' : ''}
           </div>
 
-       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-  {filteredJobs.map((job) => (
-    <JobCard key={job._id} job={job} onApply={handleApply} />
-  ))}
-</div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredJobs.map((job) => (
+              <JobCard key={job._id} job={job} onApply={handleApply} />
+            ))}
+          </div>
 
           {filteredJobs.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-gray-600 text-lg">No jobs found matching your criteria</p>
+              <p className="text-gray-600 dark:text-gray-400 text-lg">No jobs found matching your criteria</p>
             </div>
           )}
         </div>
@@ -216,12 +231,12 @@ const submitApplication = async () => {
         {selectedJob && (
           <div className="space-y-6">
             <div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">{selectedJob.title}</h3>
+              <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">{selectedJob.title}</h3>
               <p className="text-blue-600 font-semibold">{selectedJob.company}</p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Cover Letter
               </label>
               <textarea
@@ -229,7 +244,7 @@ const submitApplication = async () => {
                 onChange={(e) => setCoverLetter(e.target.value)}
                 rows="6"
                 placeholder="Tell us why you're a great fit for this position..."
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
               />
             </div>
 

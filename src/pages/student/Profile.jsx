@@ -22,13 +22,13 @@ const Profile = () => {
   const [toast, setToast] = useState(null);
   const fileInputRef = useRef(null);
 
-  // handle input field changes
+  // Handle input field changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // handle form submission
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -46,7 +46,7 @@ const Profile = () => {
     }
   };
 
-  // add/remove skill
+  // Add/remove skill
   const addSkill = () => {
     const trimmedSkill = newSkill.trim();
     if (trimmedSkill && !skills.includes(trimmedSkill)) {
@@ -59,7 +59,7 @@ const Profile = () => {
     setSkills(skills.filter((skill) => skill !== skillToRemove));
   };
 
-  // handle resume upload
+  // Handle resume upload
   const handleResumeUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -83,16 +83,16 @@ const Profile = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar />
       <div className="flex-1 p-8">
         <div className="max-w-4xl mx-auto">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">My Profile</h1>
-            <p className="text-gray-600">Manage your personal information and resume</p>
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">My Profile</h1>
+            <p className="text-gray-600 dark:text-gray-300">Manage your personal information and resume</p>
           </div>
 
-          <div className="bg-white rounded-xl shadow-md p-8">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {[
@@ -104,7 +104,7 @@ const Profile = () => {
                   { label: 'Graduation Year', name: 'graduationYear', type: 'number', icon: <Calendar className="w-4 h-4 inline mr-2" />, min: 2024, max: 2035 },
                 ].map(({ label, name, type, icon, min, max }) => (
                   <div key={name}>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       {icon}
                       {label}
                     </label>
@@ -116,7 +116,7 @@ const Profile = () => {
                       required
                       min={min}
                       max={max}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
                     />
                   </div>
                 ))}
@@ -124,7 +124,7 @@ const Profile = () => {
 
               {/* Skills Section */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Skills</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Skills</label>
                 <div className="flex gap-2 mb-3">
                   <input
                     type="text"
@@ -132,7 +132,7 @@ const Profile = () => {
                     onChange={(e) => setNewSkill(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addSkill())}
                     placeholder="Add a skill"
-                    className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
                   />
                   <button
                     type="button"
@@ -159,10 +159,10 @@ const Profile = () => {
 
               {/* Resume Upload Section */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Resume</label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Resume</label>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center dark:border-gray-600">
                   <FileText className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                  <p className="text-gray-600 mb-2">
+                  <p className="text-gray-600 dark:text-gray-300 mb-2">
                     {resume ? `Uploaded: ${resume}` : 'No resume uploaded yet'}
                   </p>
                   <input

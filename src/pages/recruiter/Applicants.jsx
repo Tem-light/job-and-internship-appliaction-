@@ -32,7 +32,6 @@ const Applicants = () => {
         applicationAPI.getJobApplicants(jobId),
       ]);
 
-      // ✅ Axios interceptor already returns response.data
       setJob(jobData);
       setApplicants(applicantsData);
     } catch (error) {
@@ -65,39 +64,39 @@ const Applicants = () => {
   if (loading) return <Loader fullScreen />;
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar />
       <div className="flex-1 p-8">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">Applicants</h1>
-            <p className="text-gray-600">
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">Applicants</h1>
+            <p className="text-gray-600 dark:text-gray-300">
               {job?.title || 'Job'} - {applicants.length} application
               {applicants.length !== 1 ? 's' : ''}
             </p>
           </div>
 
           {job && (
-            <div className="bg-white rounded-xl shadow-md p-6 mb-8">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">Job Details</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-8 border border-gray-200 dark:border-gray-700">
+              <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Job Details</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className="text-gray-600">Location:</span>{' '}
-                  <span className="font-semibold text-gray-800">{job.location}</span>
+                  <span className="text-gray-600 dark:text-gray-300">Location:</span>{' '}
+                  <span className="font-semibold text-gray-800 dark:text-gray-100">{job.location}</span>
                 </div>
                 <div>
-                  <span className="text-gray-600">Type:</span>{' '}
-                  <span className="font-semibold text-gray-800">{job.type}</span>
+                  <span className="text-gray-600 dark:text-gray-300">Type:</span>{' '}
+                  <span className="font-semibold text-gray-800 dark:text-gray-100">{job.type}</span>
                 </div>
                 <div>
-                  <span className="text-gray-600">Salary:</span>{' '}
-                  <span className="font-semibold text-gray-800">
+                  <span className="text-gray-600 dark:text-gray-300">Salary:</span>{' '}
+                  <span className="font-semibold text-gray-800 dark:text-gray-100">
                     {job.salaryMin} - {job.salaryMax}
                   </span>
                 </div>
                 <div>
-                  <span className="text-gray-600">Posted:</span>{' '}
-                  <span className="font-semibold text-gray-800">
+                  <span className="text-gray-600 dark:text-gray-300">Posted:</span>{' '}
+                  <span className="font-semibold text-gray-800 dark:text-gray-100">
                     {new Date(job.createdAt).toLocaleDateString()}
                   </span>
                 </div>
@@ -106,10 +105,10 @@ const Applicants = () => {
           )}
 
           {applicants.length === 0 ? (
-            <div className="bg-white rounded-xl shadow-md p-12 text-center">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-12 text-center">
               <User className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-gray-800 mb-2">No applicants yet</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">No applicants yet</h3>
+              <p className="text-gray-600 dark:text-gray-300">
                 Applications will appear here once students apply.
               </p>
             </div>
@@ -118,7 +117,7 @@ const Applicants = () => {
               {applicants.map((application) => (
                 <div
                   key={application._id}
-                  className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow"
+                  className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow"
                 >
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-3">
@@ -126,10 +125,10 @@ const Applicants = () => {
                         <User className="w-6 h-6 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold text-gray-800">
+                        <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">
                           {application.student.name}
                         </h3>
-                        <p className="text-sm text-gray-600">{application.student.degree}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">{application.student.degree}</p>
                       </div>
                     </div>
                     <span
@@ -146,15 +145,15 @@ const Applicants = () => {
                   </div>
 
                   <div className="space-y-2 mb-4 text-sm">
-                    <div className="flex items-center gap-2 text-gray-600">
+                    <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                       <Mail className="w-4 h-4" />
                       {application.student.email}
                     </div>
-                    <div className="flex items-center gap-2 text-gray-600">
+                    <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                       <GraduationCap className="w-4 h-4" />
                       {application.student.university}
                     </div>
-                    <div className="flex items-center gap-2 text-gray-600">
+                    <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                       <FileText className="w-4 h-4" />
                       Applied on{' '}
                       {new Date(application.createdAt).toLocaleDateString()}
@@ -188,11 +187,11 @@ const Applicants = () => {
                 <User className="w-8 h-8 text-blue-600" />
               </div>
               <div className="flex-1">
-                <h3 className="text-2xl font-bold text-gray-800 mb-1">
+                <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-1">
                   {selectedApplicant.student.name}
                 </h3>
-                <p className="text-gray-600 mb-2">{selectedApplicant.student.degree}</p>
-                <div className="flex items-center gap-2 text-gray-600 text-sm">
+                <p className="text-gray-600 dark:text-gray-300 mb-2">{selectedApplicant.student.degree}</p>
+                <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 text-sm">
                   <Mail className="w-4 h-4" />
                   {selectedApplicant.student.email}
                 </div>
@@ -211,17 +210,17 @@ const Applicants = () => {
             </div>
 
             <div className="border-t pt-4">
-              <h4 className="font-semibold text-gray-800 mb-2">Academic Information</h4>
+              <h4 className="font-semibold text-gray-800 dark:text-gray-100 mb-2">Academic Information</h4>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className="text-gray-600">University:</span>{' '}
-                  <span className="font-medium text-gray-800">
+                  <span className="text-gray-600 dark:text-gray-300">University:</span>{' '}
+                  <span className="font-medium text-gray-800 dark:text-gray-100">
                     {selectedApplicant.student.university}
                   </span>
                 </div>
                 <div>
-                  <span className="text-gray-600">Graduation Year:</span>{' '}
-                  <span className="font-medium text-gray-800">
+                  <span className="text-gray-600 dark:text-gray-300">Graduation Year:</span>{' '}
+                  <span className="font-medium text-gray-800 dark:text-gray-100">
                     {selectedApplicant.student.graduationYear}
                   </span>
                 </div>
@@ -229,7 +228,7 @@ const Applicants = () => {
             </div>
 
             <div className="border-t pt-4">
-              <h4 className="font-semibold text-gray-800 mb-2">Skills</h4>
+              <h4 className="font-semibold text-gray-800 dark:text-gray-100 mb-2">Skills</h4>
               <div className="flex flex-wrap gap-2">
                 {selectedApplicant.student.skills?.map((skill, index) => (
                   <span
@@ -243,8 +242,8 @@ const Applicants = () => {
             </div>
 
             <div className="border-t pt-4">
-              <h4 className="font-semibold text-gray-800 mb-2">Cover Letter</h4>
-              <p className="text-gray-700 text-sm leading-relaxed">
+              <h4 className="font-semibold text-gray-800 dark:text-gray-100 mb-2">Cover Letter</h4>
+              <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
                 {selectedApplicant.coverLetter}
               </p>
             </div>
@@ -252,18 +251,14 @@ const Applicants = () => {
             {selectedApplicant.status === 'pending' && (
               <div className="flex justify-end gap-4 border-t pt-4">
                 <button
-                  onClick={() =>
-                    handleUpdateStatus(selectedApplicant._id, 'rejected')
-                  }
+                  onClick={() => handleUpdateStatus(selectedApplicant._id, 'rejected')}
                   className="flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-colors"
                 >
                   <XCircle className="w-5 h-5" />
                   Reject
                 </button>
                 <button
-                  onClick={() =>
-                    handleUpdateStatus(selectedApplicant._id, 'accepted')
-                  }
+                  onClick={() => handleUpdateStatus(selectedApplicant._id, 'accepted')}
                   className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors"
                 >
                   <CheckCircle className="w-5 h-5" />

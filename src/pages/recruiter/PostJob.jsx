@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { jobAPI } from '../../utils/api';
 import Sidebar from '../../components/Sidebar';
 import Toast from '../../components/Toast';
-import { Briefcase, MapPin, DollarSign, FileText, Plus, X } from 'lucide-react';
+import { Briefcase, MapPin, DollarSign, FileText, Plus, X, Upload } from 'lucide-react';
 
 const PostJob = () => {
   const { user } = useAuth();
@@ -68,19 +68,19 @@ const PostJob = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar />
       <div className="flex-1 p-8">
         <div className="max-w-4xl mx-auto">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">Post a New Job</h1>
-            <p className="text-gray-600">Fill in the details to create a job posting</p>
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">Post a New Job</h1>
+            <p className="text-gray-600 dark:text-gray-300">Fill in the details to create a job posting</p>
           </div>
 
-          <div className="bg-white rounded-xl shadow-md p-8">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   <Briefcase className="w-4 h-4 inline mr-2" />
                   Job Title
                 </label>
@@ -91,18 +91,18 @@ const PostJob = () => {
                   onChange={handleChange}
                   required
                   placeholder="e.g., Frontend Developer Intern"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Job Type</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Job Type</label>
                   <select
                     name="type"
                     value={formData.type}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
                   >
                     <option value="Internship">Internship</option>
                     <option value="Full-time">Full-time</option>
@@ -112,12 +112,12 @@ const PostJob = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
                   <select
                     name="category"
                     value={formData.category}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
                   >
                     <option value="Software Development">Software Development</option>
                     <option value="Data Science">Data Science</option>
@@ -129,7 +129,7 @@ const PostJob = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     <MapPin className="w-4 h-4 inline mr-2" />
                     Location
                   </label>
@@ -140,12 +140,12 @@ const PostJob = () => {
                     onChange={handleChange}
                     required
                     placeholder="e.g., San Francisco, CA"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     <DollarSign className="w-4 h-4 inline mr-2" />
                     Salary Range
                   </label>
@@ -157,7 +157,7 @@ const PostJob = () => {
                       onChange={handleChange}
                       required
                       placeholder="Min"
-                      className="w-1/2 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-1/2 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
                     />
                     <input
                       type="number"
@@ -166,14 +166,14 @@ const PostJob = () => {
                       onChange={handleChange}
                       required
                       placeholder="Max"
-                      className="w-1/2 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-1/2 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
                     />
                   </div>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   <FileText className="w-4 h-4 inline mr-2" />
                   Job Description
                 </label>
@@ -184,12 +184,12 @@ const PostJob = () => {
                   required
                   rows="6"
                   placeholder="Describe the role, responsibilities, and expectations..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Requirements</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Requirements</label>
                 <div className="flex gap-2 mb-3">
                   <input
                     type="text"
@@ -197,7 +197,7 @@ const PostJob = () => {
                     onChange={(e) => setNewRequirement(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addRequirement())}
                     placeholder="Add a requirement (e.g., React.js)"
-                    className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
                   />
                   <button
                     type="button"

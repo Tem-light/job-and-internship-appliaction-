@@ -46,7 +46,7 @@ const Toast = ({ message, type = 'info', onClose, duration = 3000 }) => {
 
   return (
     <div
-      className={`fixed top-20 right-4 z-50 ${bgColor} ${borderColor} border rounded-lg shadow-lg p-4 flex items-start gap-3 max-w-md animate-slide-in`}
+      className={`fixed top-20 right-4 z-50 ${bgColor} ${borderColor} border rounded-lg shadow-lg p-4 flex items-start gap-3 max-w-md animate-slide-in dark:bg-gray-800 dark:border-gray-700`}
     >
       <Icon className={`w-5 h-5 ${iconColor} flex-shrink-0 mt-0.5`} />
       <p className={`${textColor} text-sm font-medium flex-1`}>{message}</p>

@@ -7,10 +7,21 @@ import jobRoutes from './routes/jobRoutes.js';
 import applicationRoutes from './routes/applicationRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import statsRoutes from './routes/statsRoutes.js';
+import Application from './models/Application.js';
+import notificationRoutes from './routes/notificationRoutes.js';
 
 dotenv.config();
 
 connectDB();
+
+(async () => {
+  try {
+    await Application.syncIndexes();
+    console.log('Application indexes synchronized');
+  } catch (e) {
+    console.warn('Failed to sync Application indexes:', e.message);
+  }
+})();
 
 const app = express();
 
@@ -27,6 +38,7 @@ app.use('/api/jobs', jobRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 app.use((err, req, res, next) => {
   const statusCode = res.statusCode === 200 ? 500 : res.statusCode;

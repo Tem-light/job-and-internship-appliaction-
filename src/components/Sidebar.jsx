@@ -42,7 +42,7 @@ const Sidebar = () => {
   const links = getLinks();
 
   return (
-    <aside className="w-64 bg-white shadow-lg h-screen sticky top-16">
+    <aside className="w-64 bg-white dark:bg-gray-800 shadow-lg h-screen sticky top-16">
       <nav className="p-4 space-y-2">
         {links.map(({ path, label, icon: Icon }) => (
           <Link
@@ -51,7 +51,7 @@ const Sidebar = () => {
             className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
               isActive(path)
                 ? 'bg-blue-600 text-white shadow-md'
-                : 'text-gray-700 hover:bg-gray-100'
+                : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800'
             }`}
           >
             <Icon className="w-5 h-5" />

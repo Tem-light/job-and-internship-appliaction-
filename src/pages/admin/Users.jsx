@@ -65,23 +65,23 @@ const Users = () => {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
       <Sidebar />
       <div className="flex-1 p-8">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">User Management</h1>
-            <p className="text-gray-600">Manage students, recruiters, and approvals</p>
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-2">User Management</h1>
+            <p className="text-gray-600 dark:text-gray-400">Manage students, recruiters, and approvals</p>
           </div>
 
-          <div className="bg-white rounded-xl shadow-md p-6 mb-8">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-8">
             <div className="flex gap-4">
               <button
                 onClick={() => setFilter('all')}
                 className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
                   filter === 'all'
                     ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                 }`}
               >
                 All Users ({users.length})
@@ -91,7 +91,7 @@ const Users = () => {
                 className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
                   filter === 'students'
                     ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                 }`}
               >
                 Students ({users.filter((u) => u.role === 'student').length})
@@ -101,7 +101,7 @@ const Users = () => {
                 className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
                   filter === 'recruiters'
                     ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                 }`}
               >
                 Recruiters ({users.filter((u) => u.role === 'recruiter').length})
@@ -111,7 +111,7 @@ const Users = () => {
                 className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
                   filter === 'pending'
                     ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                 }`}
               >
                 Pending Approval (
@@ -124,7 +124,7 @@ const Users = () => {
             {filteredUsers.map((user) => (
               <div
                 key={user._id}
-                className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow"
+                className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow"
               >
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex items-center gap-3">
@@ -136,8 +136,8 @@ const Users = () => {
                       )}
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold text-gray-800">{user.name}</h3>
-                      <p className="text-sm text-gray-600 capitalize">{user.role}</p>
+                      <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">{user.name}</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 capitalize">{user.role}</p>
                     </div>
                   </div>
                   {user.role === 'recruiter' && (
@@ -154,18 +154,18 @@ const Users = () => {
                 </div>
 
                 <div className="space-y-2 mb-4 text-sm">
-                  <div className="flex items-center gap-2 text-gray-600">
+                  <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                     <Mail className="w-4 h-4" />
                     {user.email}
                   </div>
                   {user.role === 'student' && (
-                    <div className="text-gray-600">
+                    <div className="text-gray-600 dark:text-gray-400">
                       <p className="font-medium">{user.university}</p>
                       <p>{user.degree}</p>
                     </div>
                   )}
                   {user.role === 'recruiter' && (
-                    <div className="text-gray-600">
+                    <div className="text-gray-600 dark:text-gray-400">
                       <p className="font-medium">{user.company}</p>
                     </div>
                   )}
@@ -182,10 +182,10 @@ const Users = () => {
           </div>
 
           {filteredUsers.length === 0 && (
-            <div className="bg-white rounded-xl shadow-md p-12 text-center">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-12 text-center">
               <User className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-gray-800 mb-2">No users found</h3>
-              <p className="text-gray-600">No users match the selected filter</p>
+              <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2">No users found</h3>
+              <p className="text-gray-600 dark:text-gray-400">No users match the selected filter</p>
             </div>
           )}
         </div>
@@ -208,9 +208,9 @@ const Users = () => {
                 )}
               </div>
               <div className="flex-1">
-                <h3 className="text-2xl font-bold text-gray-800 mb-1">{selectedUser.name}</h3>
-                <p className="text-gray-600 capitalize mb-2">{selectedUser.role}</p>
-                <div className="flex items-center gap-2 text-gray-600 text-sm">
+                <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-1">{selectedUser.name}</h3>
+                <p className="text-gray-600 dark:text-gray-400 capitalize mb-2">{selectedUser.role}</p>
+                <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 text-sm">
                   <Mail className="w-4 h-4" />
                   {selectedUser.email}
                 </div>
@@ -230,26 +230,26 @@ const Users = () => {
 
             {selectedUser.role === 'student' && (
               <div className="border-t pt-4">
-                <h4 className="font-semibold text-gray-800 mb-2">Academic Information</h4>
+                <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Academic Information</h4>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="text-gray-600">University:</span>{' '}
-                    <span className="font-medium text-gray-800">{selectedUser.university}</span>
+                    <span className="text-gray-600 dark:text-gray-400">University:</span>{' '}
+                    <span className="font-medium text-gray-800 dark:text-gray-200">{selectedUser.university}</span>
                   </div>
                   <div>
-                    <span className="text-gray-600">Degree:</span>{' '}
-                    <span className="font-medium text-gray-800">{selectedUser.degree}</span>
+                    <span className="text-gray-600 dark:text-gray-400">Degree:</span>{' '}
+                    <span className="font-medium text-gray-800 dark:text-gray-200">{selectedUser.degree}</span>
                   </div>
                   <div>
-                    <span className="text-gray-600">Graduation Year:</span>{' '}
-                    <span className="font-medium text-gray-800">
+                    <span className="text-gray-600 dark:text-gray-400">Graduation Year:</span>{' '}
+                    <span className="font-medium text-gray-800 dark:text-gray-200">
                       {selectedUser.graduationYear}
                     </span>
                   </div>
                 </div>
                 {selectedUser.skills && (
                   <div className="mt-4">
-                    <span className="text-gray-600 text-sm">Skills:</span>
+                    <span className="text-gray-600 dark:text-gray-400 text-sm">Skills:</span>
                     <div className="flex flex-wrap gap-2 mt-2">
                       {selectedUser.skills.map((skill, index) => (
                         <span
@@ -267,26 +267,26 @@ const Users = () => {
 
             {selectedUser.role === 'recruiter' && (
               <div className="border-t pt-4">
-                <h4 className="font-semibold text-gray-800 mb-2">Company Information</h4>
+                <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Company Information</h4>
                 <div className="space-y-2 text-sm">
                   <div>
-                    <span className="text-gray-600">Company:</span>{' '}
-                    <span className="font-medium text-gray-800">{selectedUser.company}</span>
+                    <span className="text-gray-600 dark:text-gray-400">Company:</span>{' '}
+                    <span className="font-medium text-gray-800 dark:text-gray-200">{selectedUser.company}</span>
                   </div>
                   {selectedUser.companyDescription && (
                     <div>
-                      <span className="text-gray-600">Description:</span>
-                      <p className="text-gray-800 mt-1">{selectedUser.companyDescription}</p>
+                      <span className="text-gray-600 dark:text-gray-400">Description:</span>
+                      <p className="text-gray-800 dark:text-gray-200 mt-1">{selectedUser.companyDescription}</p>
                     </div>
                   )}
                   {selectedUser.website && (
                     <div>
-                      <span className="text-gray-600">Website:</span>{' '}
+                      <span className="text-gray-600 dark:text-gray-400">Website:</span>{' '}
                       <a
                         href={selectedUser.website}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline"
+                        className="text-blue-600 hover:underline dark:text-blue-400"
                       >
                         {selectedUser.website}
                       </a>
