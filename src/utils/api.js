@@ -84,13 +84,35 @@ export const applicationAPI = {
 };
 export const userAPI = {
   getProfile: async () => {
-    const response = await api.get('/users/profile');
+    const response = await api.get('/auth/me');
     return response;
   },
 
-  // ✅ FIX: remove "/profile" from endpoint
   updateProfile: async (userId, userData) => {
     const response = await api.put(`/users/${userId}`, userData);
+    return response;
+  },
+
+  updateStudentProfile: async (userId, profileData) => {
+    const response = await api.put(`/users/${userId}/student-profile`, profileData);
+    return response;
+  },
+
+  uploadAvatar: async (userId, file) => {
+    const formData = new FormData();
+    formData.append('avatar', file);
+    const response = await api.post(`/users/${userId}/student-profile/avatar`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response;
+  },
+
+  uploadResume: async (userId, file) => {
+    const formData = new FormData();
+    formData.append('resume', file);
+    const response = await api.post(`/users/${userId}/student-profile/resume`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
     return response;
   },
 

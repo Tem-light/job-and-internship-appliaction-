@@ -130,7 +130,7 @@ const Dashboard = () => {
                         <span>•</span>
                         <span>{job.type}</span>
                         <span>•</span>
-                        <span>{job.salary}</span>
+                        <span>{job.salaryMin} - {job.salaryMax}</span>
                       </div>
                     </div>
                     <Link

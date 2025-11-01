@@ -3,50 +3,65 @@ import { useAuth } from '../../context/AuthContext';
 import { userAPI } from '../../utils/api';
 import Sidebar from '../../components/Sidebar';
 import Toast from '../../components/Toast';
-import { User, Mail, Phone, GraduationCap, Calendar, FileText, Plus, X, Upload } from 'lucide-react';
+import { User, Mail, Phone, GraduationCap, Calendar, FileText, Plus, X, Upload, Link as LinkIcon, Image as ImageIcon } from 'lucide-react';
 
 const Profile = () => {
   const { user, updateUser } = useAuth();
+  const profile = user?.profile || {};
   const [formData, setFormData] = useState({
-    name: user.name || '',
-    email: user.email || '',
-    phone: user.phone || '',
-    university: user.university || '',
-    degree: user.degree || '',
-    graduationYear: user.graduationYear || '',
+    name: user?.name || '',
+    email: user?.email || '',
+    university: profile.university || '',
+    degree: profile.degree || '',
+    graduationYear: profile.graduationYear || 2025,
+    phone: profile.phone || '',
+    githubUrl: profile.githubUrl || '',
+    linkedinUrl: profile.linkedinUrl || '',
+    avatarUrl: profile.avatarUrl || '',
   });
-  const [skills, setSkills] = useState(user.skills || []);
+  const [skills, setSkills] = useState(profile.skills || []);
   const [newSkill, setNewSkill] = useState('');
-  const [resume, setResume] = useState(user.resume || null);
+  const [resume, setResume] = useState(profile.resumeUrl || '');
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
   const fileInputRef = useRef(null);
+  const avatarInputRef = useRef(null);
 
-  // Handle input field changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const updatedData = { ...formData, skills, resume };
-      await userAPI.updateProfile(user._id, updatedData);
-      updateUser(updatedData);
+      const [updatedUser, updatedProfile] = await Promise.all([
+        userAPI.updateProfile(user._id, { name: formData.name, email: formData.email }),
+        userAPI.updateStudentProfile(user._id, {
+          university: formData.university,
+          degree: formData.degree,
+          graduationYear: Number(formData.graduationYear),
+          skills,
+          resumeUrl: resume,
+          phone: formData.phone,
+          githubUrl: formData.githubUrl,
+          linkedinUrl: formData.linkedinUrl,
+          avatarUrl: formData.avatarUrl,
+        }),
+      ]);
+
+      updateUser({ name: updatedUser.name, email: updatedUser.email, profile: updatedProfile });
       setToast({ message: 'Profile updated successfully!', type: 'success' });
     } catch (error) {
       console.error('Error updating profile:', error);
-      setToast({ message: 'Failed to update profile', type: 'error' });
+      setToast({ message: error?.message || 'Failed to update profile', type: 'error' });
     } finally {
       setLoading(false);
     }
   };
 
-  // Add/remove skill
   const addSkill = () => {
     const trimmedSkill = newSkill.trim();
     if (trimmedSkill && !skills.includes(trimmedSkill)) {
@@ -59,24 +74,37 @@ const Profile = () => {
     setSkills(skills.filter((skill) => skill !== skillToRemove));
   };
 
-  // Handle resume upload
   const handleResumeUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     try {
       setLoading(true);
-      // Example: upload logic (replace with your API logic)
-      // const uploadedResumeUrl = await userAPI.uploadResume(user._id, file);
-
-      // For demo purposes, just store file name locally
-      const uploadedResumeUrl = file.name;
-
-      setResume(uploadedResumeUrl);
-      setToast({ message: 'Resume uploaded successfully!', type: 'success' });
+      const res = await userAPI.uploadResume(user._id, file);
+      const newUrl = res.resumeUrl || res?.profile?.resumeUrl || '';
+      setResume(newUrl);
+      updateUser({ profile: res.profile });
+      setToast({ message: 'Resume uploaded!', type: 'success' });
     } catch (error) {
       console.error('Resume upload failed:', error);
       setToast({ message: 'Failed to upload resume', type: 'error' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAvatarUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      setLoading(true);
+      const res = await userAPI.uploadAvatar(user._id, file);
+      const newUrl = res.avatarUrl || res?.profile?.avatarUrl || '';
+      setFormData((prev) => ({ ...prev, avatarUrl: newUrl }));
+      updateUser({ profile: res.profile });
+      setToast({ message: 'Profile photo updated!', type: 'success' });
+    } catch (error) {
+      console.error('Avatar upload failed:', error);
+      setToast({ message: 'Failed to upload photo', type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -93,6 +121,34 @@ const Profile = () => {
           </div>
 
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-8">
+            {/* Avatar Section */}
+            <div className="flex items-center gap-6 mb-8">
+              <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-700 flex items-center justify-center bg-">
+                {formData.avatarUrl ? (
+                  <img src={formData.avatarUrl} alt="Avatar" className="w-full h-full object-cover item-center justify-center" />
+                ) : (
+                  <ImageIcon className="w-8 h-8 text-gray-400" />
+                )}
+              </div>
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">Profile Photo</p>
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={avatarInputRef}
+                  className="hidden"
+                  onChange={handleAvatarUpload}
+                />
+                <button
+                  type="button"
+                  onClick={() => avatarInputRef.current?.click()}
+                  className="px-4 py-2 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  <Upload className="inline w-4 h-4 mr-2" /> Upload Photo
+                </button>
+              </div>
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {[
@@ -113,13 +169,43 @@ const Profile = () => {
                       name={name}
                       value={formData[name]}
                       onChange={handleChange}
-                      required
+                      required={['name','email','university','degree','graduationYear'].includes(name)}
                       min={min}
                       max={max}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
                     />
                   </div>
                 ))}
+              </div>
+
+              {/* Social Links */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <LinkIcon className="w-4 h-4 inline mr-2" /> GitHub URL
+                  </label>
+                  <input
+                    type="url"
+                    name="githubUrl"
+                    placeholder="https://github.com/username"
+                    value={formData.githubUrl}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <LinkIcon className="w-4 h-4 inline mr-2" /> LinkedIn URL
+                  </label>
+                  <input
+                    type="url"
+                    name="linkedinUrl"
+                    placeholder="https://www.linkedin.com/in/username"
+                    value={formData.linkedinUrl}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+                  />
+                </div>
               </div>
 
               {/* Skills Section */}

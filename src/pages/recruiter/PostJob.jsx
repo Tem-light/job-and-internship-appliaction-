@@ -11,12 +11,18 @@ const PostJob = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: '',
+    company: '',
     location: '',
     type: 'Internship',
     category: 'Software Development',
     salaryMin: '',
     salaryMax: '',
     description: '',
+    openings: 1,
+    applicationStart: '',
+    applicationEnd: '',
+    contactEmail: '',
+    contactWebsite: '',
   });
   const [requirements, setRequirements] = useState([]);
   const [newRequirement, setNewRequirement] = useState('');
@@ -52,7 +58,6 @@ const PostJob = () => {
       await jobAPI.createJob({
         ...formData,
         requirements,
-        company: user?.company || 'Unknown Company', // fallback
       });
 
       setToast({ message: 'Job posted successfully!', type: 'success' });
@@ -96,6 +101,18 @@ const PostJob = () => {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Company</label>
+                  <input
+                    type="text"
+                    name="company"
+                    value={formData.company}
+                    onChange={handleChange}
+                    required
+                    placeholder="e.g., Acme Corp"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+                  />
+                </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Job Type</label>
                   <select
@@ -144,32 +161,90 @@ const PostJob = () => {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    <DollarSign className="w-4 h-4 inline mr-2" />
-                    Salary Range
-                  </label>
-                  <div className="flex gap-2">
-                    <input
-                      type="number"
-                      name="salaryMin"
-                      value={formData.salaryMin}
-                      onChange={handleChange}
-                      required
-                      placeholder="Min"
-                      className="w-1/2 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
-                    />
-                    <input
-                      type="number"
-                      name="salaryMax"
-                      value={formData.salaryMax}
-                      onChange={handleChange}
-                      required
-                      placeholder="Max"
-                      className="w-1/2 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
-                    />
-                  </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <DollarSign className="w-4 h-4 inline mr-2" />
+                  Salary Range
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    name="salaryMin"
+                    value={formData.salaryMin}
+                    onChange={handleChange}
+                    required
+                    placeholder="Min"
+                    className="w-1/2 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+                  />
+                  <input
+                    type="number"
+                    name="salaryMax"
+                    value={formData.salaryMax}
+                    onChange={handleChange}
+                    required
+                    placeholder="Max"
+                    className="w-1/2 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+                  />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Number of Students (Openings)</label>
+                <input
+                  type="number"
+                  name="openings"
+                  min="1"
+                  value={formData.openings}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Application Window</label>
+                <div className="flex gap-2">
+                  <input
+                    type="date"
+                    name="applicationStart"
+                    value={formData.applicationStart}
+                    onChange={handleChange}
+                    className="w-1/2 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+                  />
+                  <input
+                    type="date"
+                    name="applicationEnd"
+                    value={formData.applicationEnd}
+                    onChange={handleChange}
+                    className="w-1/2 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Company Email</label>
+                  <input
+                    type="email"
+                    name="contactEmail"
+                    value={formData.contactEmail}
+                    onChange={handleChange}
+                    placeholder="hr@company.com"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Company Website</label>
+                  <input
+                    type="url"
+                    name="contactWebsite"
+                    value={formData.contactWebsite}
+                    onChange={handleChange}
+                    placeholder="https://company.com/careers"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+                  />
+                </div>
+              </div>
               </div>
 
               <div>

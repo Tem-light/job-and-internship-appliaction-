@@ -25,6 +25,20 @@ export const applyForJob = async (req, res) => {
       return res.status(404).json({ message: 'Job not found' });
     }
 
+    // Check application window
+    const now = new Date();
+    if (job.applicationStart && now < job.applicationStart) {
+      return res.status(400).json({ message: 'Applications have not started yet' });
+    }
+    if (job.applicationEnd && now > job.applicationEnd) {
+      return res.status(400).json({ message: 'Applications are closed' });
+    }
+
+    // Check capacity
+    if (job.openings && job.applicantsCount >= job.openings) {
+      return res.status(400).json({ message: 'Application limit reached for this job' });
+    }
+
     // Check for duplicate application
     const existingApp = await Application.findOne({
       job: jobId,
@@ -44,6 +58,14 @@ export const applyForJob = async (req, res) => {
       status: 'pending',
       appliedDate: new Date(),
     });
+
+    // Increment applicants count
+    try {
+      job.applicantsCount = (job.applicantsCount || 0) + 1;
+      await job.save();
+    } catch (e) {
+      console.warn('Failed to increment applicantsCount:', e.message);
+    }
 
     // Create notifications
     try {

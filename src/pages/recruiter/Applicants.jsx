@@ -121,8 +121,12 @@ const Applicants = () => {
                 >
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                        <User className="w-6 h-6 text-blue-600" />
+                      <div className="w-12 h-12 rounded-full overflow-hidden bg-blue-100 flex items-center justify-center">
+                        {application.student?.avatarUrl ? (
+                          <img src={application.student.avatarUrl} alt={application.student.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <User className="w-6 h-6 text-blue-600" />
+                        )}
                       </div>
                       <div>
                         <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">
@@ -183,8 +187,12 @@ const Applicants = () => {
         {selectedApplicant && (
           <div className="space-y-6">
             <div className="flex items-start gap-4">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <User className="w-8 h-8 text-blue-600" />
+              <div className="w-16 h-16 rounded-full overflow-hidden bg-blue-100 flex items-center justify-center flex-shrink-0">
+                {selectedApplicant.student?.avatarUrl ? (
+                  <img src={selectedApplicant.student.avatarUrl} alt={selectedApplicant.student.name} className="w-full h-full object-cover" />
+                ) : (
+                  <User className="w-8 h-8 text-blue-600" />
+                )}
               </div>
               <div className="flex-1">
                 <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-1">
@@ -238,6 +246,21 @@ const Applicants = () => {
                     {skill}
                   </span>
                 ))}
+              </div>
+            </div>
+
+            <div className="border-t pt-4">
+              <h4 className="font-semibold text-gray-800 dark:text-gray-100 mb-2">Links</h4>
+              <div className="flex gap-4 text-sm">
+                {selectedApplicant.student.githubUrl && (
+                  <a className="text-blue-600 hover:underline" href={selectedApplicant.student.githubUrl} target="_blank" rel="noopener noreferrer">GitHub</a>
+                )}
+                {selectedApplicant.student.linkedinUrl && (
+                  <a className="text-blue-600 hover:underline" href={selectedApplicant.student.linkedinUrl} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                )}
+                {selectedApplicant.student.resumeUrl && (
+                  <a className="text-blue-600 hover:underline" href={selectedApplicant.student.resumeUrl} target="_blank" rel="noopener noreferrer">Resume</a>
+                )}
               </div>
             </div>
 

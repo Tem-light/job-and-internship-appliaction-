@@ -235,6 +235,21 @@ const JobSearch = () => {
               <p className="text-blue-600 font-semibold">{selectedJob.company}</p>
             </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700 dark:text-gray-300">
+              <div><strong>Location:</strong> {selectedJob.location}</div>
+              <div><strong>Type:</strong> {selectedJob.type}</div>
+              <div><strong>Salary:</strong> {selectedJob.salaryMin} - {selectedJob.salaryMax}</div>
+              <div><strong>Openings:</strong> {selectedJob.openings || '-'}</div>
+              <div><strong>Apply From:</strong> {selectedJob.applicationStart ? new Date(selectedJob.applicationStart).toLocaleDateString() : '—'}</div>
+              <div><strong>Apply Until:</strong> {selectedJob.applicationEnd ? new Date(selectedJob.applicationEnd).toLocaleDateString() : '—'}</div>
+              {selectedJob.contactEmail && (
+                <div><strong>Contact Email:</strong> <a className="text-blue-600 hover:underline" href={`mailto:${selectedJob.contactEmail}`}>{selectedJob.contactEmail}</a></div>
+              )}
+              {selectedJob.contactWebsite && (
+                <div><strong>Website:</strong> <a className="text-blue-600 hover:underline" href={selectedJob.contactWebsite} target="_blank" rel="noreferrer">{selectedJob.contactWebsite}</a></div>
+              )}
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Cover Letter

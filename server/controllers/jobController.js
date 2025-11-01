@@ -58,9 +58,15 @@ export const createJob = async (req, res) => {
       location,
       type,
       category,
-      salary,
+      salaryMin,
+      salaryMax,
       description,
       requirements,
+      openings,
+      applicationStart,
+      applicationEnd,
+      contactEmail,
+      contactWebsite,
       postedBy,
     } = req.body;
 
@@ -78,9 +84,15 @@ export const createJob = async (req, res) => {
       location,
       type,
       category,
-      salary,
+      salaryMin,
+      salaryMax,
       description,
       requirements,
+      openings,
+      applicationStart,
+      applicationEnd,
+      contactEmail,
+      contactWebsite,
       status: 'active',
     });
 
@@ -101,10 +113,32 @@ export const updateJob = async (req, res) => {
       return res.status(403).json({ message: 'Not authorized to update this job' });
     }
 
-    const updatedJob = await Job.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+  const updatedJob = await Job.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: {
+          title: req.body.title,
+          company: req.body.company,
+          location: req.body.location,
+          type: req.body.type,
+          category: req.body.category,
+          salaryMin: req.body.salaryMin,
+          salaryMax: req.body.salaryMax,
+          description: req.body.description,
+          requirements: req.body.requirements,
+          openings: req.body.openings,
+          applicationStart: req.body.applicationStart,
+          applicationEnd: req.body.applicationEnd,
+          contactEmail: req.body.contactEmail,
+          contactWebsite: req.body.contactWebsite,
+          status: req.body.status,
+        },
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
 
     res.json(updatedJob);
   } catch (error) {

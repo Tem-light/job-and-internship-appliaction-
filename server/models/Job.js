@@ -44,6 +44,26 @@ const jobSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    // New fields
+    openings: {
+      type: Number,
+      default: 1,
+      min: 1,
+    },
+    applicationStart: {
+      type: Date,
+    },
+    applicationEnd: {
+      type: Date,
+    },
+    contactEmail: {
+      type: String,
+      default: '',
+    },
+    contactWebsite: {
+      type: String,
+      default: '',
+    },
     status: {
       type: String,
       enum: ['active', 'closed', 'draft'],

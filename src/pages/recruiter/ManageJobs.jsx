@@ -26,8 +26,16 @@ const ManageJobs = () => {
     company: '',
     location: '',
     type: '',
-    salary: '',
+    category: '',
+    salaryMin: '',
+    salaryMax: '',
+    openings: 1,
+    applicationStart: '',
+    applicationEnd: '',
+    contactEmail: '',
+    contactWebsite: '',
     description: '',
+    requirements: [],
   });
 
   const [toast, setToast] = useState(null);
@@ -70,8 +78,16 @@ const ManageJobs = () => {
       company: job.company,
       location: job.location,
       type: job.type,
-      salary: job.salary,
+      category: job.category,
+      salaryMin: job.salaryMin,
+      salaryMax: job.salaryMax,
+      openings: job.openings || 1,
+      applicationStart: job.applicationStart ? job.applicationStart.substring(0,10) : '',
+      applicationEnd: job.applicationEnd ? job.applicationEnd.substring(0,10) : '',
+      contactEmail: job.contactEmail || '',
+      contactWebsite: job.contactWebsite || '',
       description: job.description,
+      requirements: job.requirements || [],
     });
     setEditModal(job); // keep the job object with _id
   };
@@ -145,7 +161,9 @@ const ManageJobs = () => {
                         <span>•</span>
                         <span>{job.type}</span>
                         <span>•</span>
-                        <span>{job.salary}</span>
+                        <span>{job.salaryMin} - {job.salaryMax}</span>
+                        <span>•</span>
+                        <span>{(job.applicantsCount||0)} / {(job.openings||'-')} spots</span>
                       </div>
                     </div>
                     <span
@@ -231,7 +249,7 @@ const ManageJobs = () => {
         <div className="space-y-4">
           {editModal && (
             <>
-              {['title', 'company', 'location', 'type', 'salary', 'description'].map((field) => (
+              {['title', 'company', 'location', 'type', 'category', 'description'].map((field) => (
                 <div key={field}>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {field.charAt(0).toUpperCase() + field.slice(1)}
@@ -255,6 +273,44 @@ const ManageJobs = () => {
                   )}
                 </div>
               ))}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Salary Min</label>
+                  <input type="number" name="salaryMin" value={editForm.salaryMin} onChange={handleEditChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Salary Max</label>
+                  <input type="number" name="salaryMax" value={editForm.salaryMax} onChange={handleEditChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Openings</label>
+                  <input type="number" name="openings" value={editForm.openings} onChange={handleEditChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Start Date</label>
+                  <input type="date" name="applicationStart" value={editForm.applicationStart} onChange={handleEditChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">End Date</label>
+                  <input type="date" name="applicationEnd" value={editForm.applicationEnd} onChange={handleEditChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Company Email</label>
+                  <input type="email" name="contactEmail" value={editForm.contactEmail} onChange={handleEditChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Company Website</label>
+                  <input type="url" name="contactWebsite" value={editForm.contactWebsite} onChange={handleEditChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300" />
+                </div>
+              </div>
+
               <div className="flex justify-end gap-4">
                 <button
                   onClick={() => setEditModal(null)}

@@ -32,16 +32,20 @@ const JobCard = ({ job, onApply, showApplicants = false }) => {
         </div>
         <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
           <DollarSign className="w-4 h-4" />
-          <span className="text-sm">{job.salary}</span>
+          <span className="text-sm">
+            {typeof job.salaryMin === 'number' && typeof job.salaryMax === 'number'
+              ? `${job.salaryMin} - ${job.salaryMax}`
+              : 'Not disclosed'}
+          </span>
         </div>
         <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
           <Calendar className="w-4 h-4" />
-          <span className="text-sm">Posted on {job.postedDate}</span>
+          <span className="text-sm">Posted on {new Date(job.createdAt).toLocaleDateString()}</span>
         </div>
         {showApplicants && (
           <div className="flex items-center gap-2 text-gray-600">
             <Users className="w-4 h-4" />
-            <span className="text-sm">{job.applicants} applicants</span>
+            <span className="text-sm">{job.applicantsCount || 0} / {job.openings || '-'} spots</span>
           </div>
         )}
       </div>

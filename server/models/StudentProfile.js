@@ -28,6 +28,23 @@ const studentProfileSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    phone: {
+      type: String,
+      default: '',
+    },
+    // New fields for richer student profiles
+    avatarUrl: {
+      type: String,
+      default: '',
+    },
+    githubUrl: {
+      type: String,
+      default: '',
+    },
+    linkedinUrl: {
+      type: String,
+      default: '',
+    },
   },
   {
     timestamps: true,

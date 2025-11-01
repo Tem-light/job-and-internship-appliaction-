@@ -36,7 +36,12 @@ export const updateProfile = async (req, res) => {
 
 export const updateStudentProfile = async (req, res) => {
   try {
-    const { university, degree, graduationYear, skills, resumeUrl } = req.body;
+    // Authorization: only owner can update their profile
+    if (req.user._id.toString() !== req.params.userId) {
+      return res.status(403).json({ message: 'Not authorized to update this profile' });
+    }
+
+    const { university, degree, graduationYear, skills, resumeUrl, phone, avatarUrl, githubUrl, linkedinUrl } = req.body;
 
     const profile = await StudentProfile.findOneAndUpdate(
       { user: req.params.userId },
@@ -46,6 +51,10 @@ export const updateStudentProfile = async (req, res) => {
         graduationYear,
         skills,
         resumeUrl,
+        phone,
+        avatarUrl,
+        githubUrl,
+        linkedinUrl,
       },
       { new: true, runValidators: true }
     );
@@ -55,6 +64,67 @@ export const updateStudentProfile = async (req, res) => {
     }
 
     res.status(200).json(profile);
+  } catch (error) {
+    handleError(res, error);
+  }
+};
+
+// Upload avatar and update student's avatarUrl
+export const uploadStudentAvatar = async (req, res) => {
+  try {
+    // Authorization: only owner can upload their avatar
+    if (req.user._id.toString() !== req.params.userId) {
+      return res.status(403).json({ message: 'Not authorized to upload avatar for this profile' });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    const publicUrl = `${baseUrl}/uploads/avatars/${req.file.filename}`;
+
+    const profile = await StudentProfile.findOneAndUpdate(
+      { user: req.params.userId },
+      { avatarUrl: publicUrl },
+      { new: true }
+    );
+
+    if (!profile) {
+      return res.status(404).json({ message: 'Student profile not found' });
+    }
+
+    res.status(200).json({ avatarUrl: publicUrl, profile });
+  } catch (error) {
+    handleError(res, error);
+  }
+};
+
+// Upload resume and update student's resumeUrl
+export const uploadStudentResume = async (req, res) => {
+  try {
+    if (req.user._id.toString() !== req.params.userId) {
+      return res.status(403).json({ message: 'Not authorized to upload resume for this profile' });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    const publicUrl = `${baseUrl}/uploads/resumes/${req.file.filename}`;
+
+    const profile = await StudentProfile.findOneAndUpdate(
+      { user: req.params.userId },
+      { resumeUrl: publicUrl },
+      { new: true }
+    );
+
+    if (!profile) {
+      return res.status(404).json({ message: 'Student profile not found' });
+    }
+
+    res.status(200).json({ resumeUrl: publicUrl, profile });
   } catch (error) {
     handleError(res, error);
   }
