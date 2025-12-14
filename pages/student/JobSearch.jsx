@@ -108,17 +108,12 @@ const JobSearch = () => {
       setCoverLetter('');
     } catch (error) {
       console.error('Application submission error:', error);
+      const msg = error?.message || error?.data?.message || error?.response?.data?.message || 'Failed to submit application';
       if (error.response?.status === 401) {
-        setToast({ 
-          message: 'Session expired. Please log in again.', 
-          type: 'error' 
-        });
+        setToast({ message: 'Session expired. Please log in again.', type: 'error' });
         localStorage.removeItem('token');
       } else {
-        setToast({ 
-          message: 'Failed to submit application', 
-          type: 'error' 
-        });
+        setToast({ message: msg, type: 'error' });
       }
     } finally {
       setApplying(false);

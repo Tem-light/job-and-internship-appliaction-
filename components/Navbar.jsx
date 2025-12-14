@@ -30,6 +30,9 @@ const Navbar = () => {
     }
   };
 
+  const avatarSrc = user?.role === 'student' ? user?.profile?.avatarUrl : user?.role === 'recruiter' ? user?.profile?.logoUrl : '';
+  const safeAvatarSrc = avatarSrc && avatarSrc.startsWith('/uploads') ? `${avatarSrc}` : avatarSrc; // supports vite proxy for /uploads
+
 return (
   <nav className="bg-white dark:bg-gray-700 shadow-md sticky top-0 z-50">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -141,7 +144,13 @@ return (
                   to={user.role === 'student' ? '/student/profile' : '#'}
                   className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-blue-600"
                 >
-                  <User className="w-5 h-5" />
+                  <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+                    {safeAvatarSrc ? (
+                      <img src={safeAvatarSrc} alt={user.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <User className="w-5 h-5" />
+                    )}
+                  </div>
                   <span className="font-medium">{user.name}</span>
                 </Link>
                 <button

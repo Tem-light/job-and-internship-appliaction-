@@ -60,8 +60,8 @@ const ManageJobs = () => {
   const handleDelete = async () => {
     setDeleting(true);
     try {
-      await jobAPI.deleteJob(deleteModal.id);
-      setJobs(jobs.filter((job) => job.id !== deleteModal.id));
+      await jobAPI.deleteJob(deleteModal._id || deleteModal.id);
+      setJobs(jobs.filter((job) => (job._id || job.id) !== (deleteModal._id || deleteModal.id)));
       setToast({ message: 'Job deleted successfully', type: 'success' });
       setDeleteModal(null);
     } catch (error) {
@@ -149,7 +149,7 @@ const ManageJobs = () => {
             <div className="space-y-6">
               {jobs.map((job) => (
                 <div
-                  key={job.id}
+                  key={job._id || job.id}
                   className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow"
                 >
                   <div className="flex justify-between items-start mb-4">

@@ -251,7 +251,7 @@ const Applicants = () => {
 
             <div className="border-t pt-4">
               <h4 className="font-semibold text-gray-800 dark:text-gray-100 mb-2">Links</h4>
-              <div className="flex gap-4 text-sm">
+              <div className="flex flex-wrap gap-4 text-sm">
                 {selectedApplicant.student.githubUrl && (
                   <a className="text-blue-600 hover:underline" href={selectedApplicant.student.githubUrl} target="_blank" rel="noopener noreferrer">GitHub</a>
                 )}
@@ -259,7 +259,10 @@ const Applicants = () => {
                   <a className="text-blue-600 hover:underline" href={selectedApplicant.student.linkedinUrl} target="_blank" rel="noopener noreferrer">LinkedIn</a>
                 )}
                 {selectedApplicant.student.resumeUrl && (
-                  <a className="text-blue-600 hover:underline" href={selectedApplicant.student.resumeUrl} target="_blank" rel="noopener noreferrer">Resume</a>
+                  <div className="flex items-center gap-3">
+                    <a className="text-blue-600 hover:underline" href={selectedApplicant.student.resumeUrl} target="_blank" rel="noopener noreferrer">View Resume</a>
+                    <a className="text-blue-600 hover:underline" href={selectedApplicant.student.resumeUrl} download>Download Resume</a>
+                  </div>
                 )}
               </div>
             </div>

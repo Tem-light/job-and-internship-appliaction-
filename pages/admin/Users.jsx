@@ -128,8 +128,12 @@ const Users = () => {
               >
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                      {user.role === 'student' ? (
+                    <div className="w-12 h-12 rounded-full overflow-hidden bg-blue-100 flex items-center justify-center">
+                      {user.role === 'student' && user.avatarUrl ? (
+                        <img src={user.avatarUrl} alt={user.name} className="w-full h-full object-cover" />
+                      ) : user.role === 'recruiter' && user.logoUrl ? (
+                        <img src={user.logoUrl} alt={user.name} className="w-full h-full object-cover" />
+                      ) : user.role === 'student' ? (
                         <User className="w-6 h-6 text-blue-600" />
                       ) : (
                         <Building className="w-6 h-6 text-blue-600" />
@@ -140,17 +144,24 @@ const Users = () => {
                       <p className="text-sm text-gray-600 dark:text-gray-400 capitalize">{user.role}</p>
                     </div>
                   </div>
-                  {user.role === 'recruiter' && (
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        user.approved
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-yellow-100 text-yellow-700'
-                      }`}
-                    >
-                      {user.approved ? 'Approved' : 'Pending'}
-                    </span>
-                  )}
+                  <div className="flex gap-2">
+                    {user.role === 'recruiter' && (
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          user.approved
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-yellow-100 text-yellow-700'
+                        }`}
+                      >
+                        {user.approved ? 'Approved' : 'Pending'}
+                      </span>
+                    )}
+                    {user.blocked && (
+                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">
+                        Blocked
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 <div className="space-y-2 mb-4 text-sm">
@@ -229,33 +240,51 @@ const Users = () => {
             </div>
 
             {selectedUser.role === 'student' && (
-              <div className="border-t pt-4">
-                <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Academic Information</h4>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="text-gray-600 dark:text-gray-400">University:</span>{' '}
-                    <span className="font-medium text-gray-800 dark:text-gray-200">{selectedUser.university}</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-600 dark:text-gray-400">Degree:</span>{' '}
-                    <span className="font-medium text-gray-800 dark:text-gray-200">{selectedUser.degree}</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-600 dark:text-gray-400">Graduation Year:</span>{' '}
-                    <span className="font-medium text-gray-800 dark:text-gray-200">
-                      {selectedUser.graduationYear}
-                    </span>
+              <div className="border-t pt-4 space-y-4">
+                <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Student Profile</h4>
+                <div className="flex items-center gap-4">
+                  {selectedUser.avatarUrl && (
+                    <img src={selectedUser.avatarUrl} alt="avatar" className="w-16 h-16 rounded-full object-cover" />
+                  )}
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-gray-600 dark:text-gray-400">University:</span>{' '}
+                      <span className="font-medium text-gray-800 dark:text-gray-200">{selectedUser.university}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600 dark:text-gray-400">Degree:</span>{' '}
+                      <span className="font-medium text-gray-800 dark:text-gray-200">{selectedUser.degree}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600 dark:text-gray-400">Graduation Year:</span>{' '}
+                      <span className="font-medium text-gray-800 dark:text-gray-200">{selectedUser.graduationYear}</span>
+                    </div>
+                    {selectedUser.resumeUrl && (
+                      <div>
+                        <span className="text-gray-600 dark:text-gray-400">Resume:</span>{' '}
+                        <a href={selectedUser.resumeUrl} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">View</a>
+                      </div>
+                    )}
+                    {selectedUser.githubUrl && (
+                      <div>
+                        <span className="text-gray-600 dark:text-gray-400">GitHub:</span>{' '}
+                        <a href={selectedUser.githubUrl} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">{selectedUser.githubUrl}</a>
+                      </div>
+                    )}
+                    {selectedUser.linkedinUrl && (
+                      <div>
+                        <span className="text-gray-600 dark:text-gray-400">LinkedIn:</span>{' '}
+                        <a href={selectedUser.linkedinUrl} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">{selectedUser.linkedinUrl}</a>
+                      </div>
+                    )}
                   </div>
                 </div>
-                {selectedUser.skills && (
-                  <div className="mt-4">
+                {selectedUser.skills && selectedUser.skills.length > 0 && (
+                  <div>
                     <span className="text-gray-600 dark:text-gray-400 text-sm">Skills:</span>
                     <div className="flex flex-wrap gap-2 mt-2">
                       {selectedUser.skills.map((skill, index) => (
-                        <span
-                          key={index}
-                          className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm"
-                        >
+                        <span key={index} className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
                           {skill}
                         </span>
                       ))}
@@ -266,38 +295,43 @@ const Users = () => {
             )}
 
             {selectedUser.role === 'recruiter' && (
-              <div className="border-t pt-4">
+              <div className="border-t pt-4 space-y-4">
                 <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Company Information</h4>
-                <div className="space-y-2 text-sm">
-                  <div>
-                    <span className="text-gray-600 dark:text-gray-400">Company:</span>{' '}
-                    <span className="font-medium text-gray-800 dark:text-gray-200">{selectedUser.company}</span>
+                <div className="flex items-start gap-4">
+                  {selectedUser.logoUrl && (
+                    <img src={selectedUser.logoUrl} alt="logo" className="w-16 h-16 rounded object-cover" />
+                  )}
+                  <div className="space-y-2 text-sm">
+                    <div>
+                      <span className="text-gray-600 dark:text-gray-400">Company:</span>{' '}
+                      <span className="font-medium text-gray-800 dark:text-gray-200">{selectedUser.company}</span>
+                    </div>
+                    {selectedUser.companyDescription && (
+                      <div>
+                        <span className="text-gray-600 dark:text-gray-400">Description:</span>
+                        <p className="text-gray-800 dark:text-gray-200 mt-1">{selectedUser.companyDescription}</p>
+                      </div>
+                    )}
+                    {selectedUser.website && (
+                      <div>
+                        <span className="text-gray-600 dark:text-gray-400">Website:</span>{' '}
+                        <a
+                          href={selectedUser.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline dark:text-blue-400"
+                        >
+                          {selectedUser.website}
+                        </a>
+                      </div>
+                    )}
                   </div>
-                  {selectedUser.companyDescription && (
-                    <div>
-                      <span className="text-gray-600 dark:text-gray-400">Description:</span>
-                      <p className="text-gray-800 dark:text-gray-200 mt-1">{selectedUser.companyDescription}</p>
-                    </div>
-                  )}
-                  {selectedUser.website && (
-                    <div>
-                      <span className="text-gray-600 dark:text-gray-400">Website:</span>{' '}
-                      <a
-                        href={selectedUser.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline dark:text-blue-400"
-                      >
-                        {selectedUser.website}
-                      </a>
-                    </div>
-                  )}
                 </div>
               </div>
             )}
 
             <div className="flex justify-end gap-4 border-t pt-4">
-              {selectedUser.role === 'recruiter' && !selectedUser.approved && (
+              {selectedUser.role === 'recruiter' && !selectedUser.approved && !selectedUser.blocked && (
                 <button
                   onClick={() => handleApprove(selectedUser._id)}
                   className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors"
@@ -306,13 +340,15 @@ const Users = () => {
                   Approve Recruiter
                 </button>
               )}
-              <button
-                onClick={() => handleBlock(selectedUser._id)}
-                className="flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-colors"
-              >
-                <XCircle className="w-5 h-5" />
-                Block User
-              </button>
+              {!selectedUser.blocked && (
+                <button
+                  onClick={() => handleBlock(selectedUser._id)}
+                  className="flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-colors"
+                >
+                  <XCircle className="w-5 h-5" />
+                  Block User
+                </button>
+              )}
             </div>
           </div>
         )}

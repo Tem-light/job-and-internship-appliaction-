@@ -23,9 +23,9 @@ const Dashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const jobs = await jobAPI.getRecruiterJobs(user.id);
+      const jobs = await jobAPI.getRecruiterJobs();
       const activeJobs = jobs.filter((job) => job.status === 'active');
-      const totalApplicants = jobs.reduce((sum, job) => sum + job.applicants, 0);
+      const totalApplicants = jobs.reduce((sum, job) => sum + (job.applicantsCount || 0), 0);
 
       setRecentJobs(jobs.slice(0, 3));
       setStats({
@@ -124,9 +124,9 @@ const Dashboard = () => {
               </div>
             ) : (
               <div className="space-y-4">
-                {recentJobs.map((job) => (
-                  <div
-                    key={job.id}
+                  {recentJobs.map((job) => (
+                    <div
+                      key={job._id || job.id}
                     className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-blue-300 transition-colors dark:hover:border-blue-500"
                   >
                     <div className="flex justify-between items-start">
@@ -136,17 +136,17 @@ const Dashboard = () => {
                         <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
                           <span className="flex items-center gap-1">
                             <Users className="w-4 h-4" />
-                            {job.applicants} applicants
+                            {(job.applicantsCount || 0)} applicants
                           </span>
                           <span>•</span>
                           <span>{job.type}</span>
                           <span>•</span>
-                          <span>Posted {job.postedDate}</span>
+                          <span>Posted {new Date(job.createdAt).toLocaleDateString()}</span>
                         </div>
                       </div>
                       <div className="flex gap-2">
                         <Link
-                          to={`/recruiter/applicants/${job.id}`}
+                          to={`/recruiter/applicants/${job._id || job.id}`}
                           className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
                         >
                           View Applicants

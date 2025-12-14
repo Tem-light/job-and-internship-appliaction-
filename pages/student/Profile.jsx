@@ -98,9 +98,12 @@ const Profile = () => {
     try {
       setLoading(true);
       const res = await userAPI.uploadAvatar(user._id, file);
-      const newUrl = res.avatarUrl || res?.profile?.avatarUrl || '';
-      setFormData((prev) => ({ ...prev, avatarUrl: newUrl }));
-      updateUser({ profile: res.profile });
+      const rawUrl = res.avatarUrl || res?.profile?.avatarUrl || '';
+      const cacheBusted = rawUrl ? `${rawUrl}${rawUrl.includes('?') ? '&' : '?'}t=${Date.now()}` : '';
+      setFormData((prev) => ({ ...prev, avatarUrl: cacheBusted }));
+      // keep token and other fields, but refresh profile with latest server data while using cache-busted avatar locally
+      const newProfile = { ...(res.profile || {}), avatarUrl: cacheBusted };
+      updateUser({ profile: newProfile });
       setToast({ message: 'Profile photo updated!', type: 'success' });
     } catch (error) {
       console.error('Avatar upload failed:', error);
